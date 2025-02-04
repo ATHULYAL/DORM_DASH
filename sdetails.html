@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Details Page</title>
+    <style>
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #dfe7ea;
+        font-family: "Georgia", serif;
+        text-align: center;
+        margin-right: 10px;
+      }
+
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: background 0.3s, padding-left 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+
+      .content {
+        margin-left: 280px;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-left: 20px;
+      }
+
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #dfe7ea;
+      }
+
+      .profile span {
+        color: white;
+      }
+
+      .table-section {
+        margin-top: 20px;
+        background: linear-gradient(120deg, #f7fafc, #dfe7ea);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        margin-left: 20px;
+      }
+
+      .table-section h3 {
+        margin: 0 0 20px 0;
+        color: #2e4756;
+        font-family: "Georgia", serif;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        margin-top: 20px;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+      }
+
+      table th {
+        background-color: #3b5d6b;
+        color: white;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .actions button {
+        border: none;
+        background: none;
+        cursor: pointer;
+        padding: 5px;
+      }
+
+      .actions button.edit {
+        color: #007bff;
+      }
+
+      .actions button.delete {
+        color: #dc3545;
+      }
+
+      .btn {
+        background: linear-gradient(90deg, #2e4756, #3b5d6b);
+        color: #f0f7fa;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: "Georgia", serif;
+        transition: background 0.3s;
+      }
+
+      .btn:hover {
+        background: #3b5d6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="addash.html">Dashboard</a>
+      <a href="registration.html">Registration</a>
+      <a href="sdetails.html">Student Details</a>
+      <a href="#">Attendance</a>
+      <a href="adroom.html">Room Details</a>
+      <a href="#">Fee Details</a>
+      <a href="mealplan.html">Meal Plan</a>
+      <a href="#">Feedback</a>
+      <a href="notice.html">Notice</a>
+      <a href="#">Leave Form</a>
+      <a href="login.html">Logout</a>
+    </div>
+
+    <div class="content">
+      <div class="header">
+        <h2>STUDENT DETAILS</h2>
+        <div class="profile">
+          <img src="https://via.placeholder.com/40" alt="Admin" />
+          <span>Admin Name</span>
+        </div>
+      </div>
+
+      <div class="table-section">
+        <h3>Student List</h3>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Reg No</th>
+                <th>Name</th>
+                <th>Room No</th>
+                <th>Course</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>101</td>
+                <td>Jane Doe</td>
+                <td>1</td>
+                <td>Computer Science</td>
+                <td class="actions">
+                  <button class="edit">&#9998;</button>
+                  <button class="delete">&#10060;</button>
+                </td>
+              </tr>
+              <tr>
+                <td>102</td>
+                <td>Jolly Smith</td>
+                <td>2</td>
+                <td>Computer Science</td>
+                <td class="actions">
+                  <button class="edit">&#9998;</button>
+                  <button class="delete">&#10060;</button>
+                </td>
+              </tr>
+              <tr>
+                <td>103</td>
+                <td>Mary Johnson</td>
+                <td>3</td>
+                <td>Electrical and Electronics</td>
+                <td class="actions">
+                  <button class="edit">&#9998;</button>
+                  <button class="delete">&#10060;</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
