@@ -20,8 +20,21 @@
         padding: 20px;
         position: fixed;
         color: #f0f7fa;
+        scrollbar-width: thin;
+        scrollbar-color: #a5b9c0 #2e4756;
       }
-
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .sidebar::-webkit-scrollbar-thumb {
+        background-color: #a5b9c0;
+        border-radius: 4px;
+    }
+    
+    .sidebar::-webkit-scrollbar-track {
+        background: #2e4756;
+    }
       .sidebar h1 {
         font-size: 2rem;
         margin-right: 10px;
@@ -176,6 +189,7 @@
       <a href="mealplan.html">Meal Plan</a>
       <a href="#">Feedback</a>
       <a href="notice.html">Notice</a>
+      <a href="guidelines.html">Guidelines</a>
       <a href="#">Leave Form </a>
       <a href="login.html">Logout</a>
     </div>
