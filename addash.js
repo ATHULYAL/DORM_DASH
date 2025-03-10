@@ -1,38 +1,66 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Logout Functionality
-    const logoutButton = document.querySelector('a[href="login.html"]');
-    if (logoutButton) {
-      logoutButton.addEventListener("click", function (event) {
-        event.preventDefault();
-        localStorage.removeItem("token"); // Clear stored token (if using authentication)
-        alert("Logged out successfully!");
-        window.location.href = "login.html"; // Redirect to login page
-      });
-    }
-  
-    // Highlight Active Sidebar Link
-    const sidebarLinks = document.querySelectorAll(".sidebar a");
-    sidebarLinks.forEach((link) => {
-      if (link.href === window.location.href) {
-        link.style.fontWeight = "bold";
-        link.style.backgroundColor = "#3b5d6b";
-      }
-    });
-  
-    // Dynamic Notice Board (Simulated Data Fetch)
-    const notices = [
-      { title: "Hostel Maintenance", message: "Scheduled maintenance on Feb 10th." },
-      { title: "Sports Meet", message: "Annual sports event on March 5th. Register now!" },
-    ];
-  
     const noticeBoard = document.querySelector(".notice-board");
-    if (noticeBoard) {
-      notices.forEach((notice) => {
-        const noticeDiv = document.createElement("div");
-        noticeDiv.classList.add("notice");
-        noticeDiv.innerHTML = `<p><strong>${notice.title}</strong></p><p>${notice.message}</p>`;
-        noticeBoard.appendChild(noticeDiv);
-      });
+    
+    // Sample notices stored in localStorage
+    let notices = JSON.parse(localStorage.getItem("notices")) || [
+        { title: "Last day of fee payment", message: "Make sure to clear all dues before the end of the month." },
+        { title: "Farewell Party", message: "Join us to bid farewell to our seniors on January 30th." }
+    ];
+    
+    function displayNotices() {
+        // Remove existing notices before adding new ones
+        const existingNotices = document.querySelectorAll(".notice");
+        existingNotices.forEach(notice => notice.remove());
+        
+        notices.forEach((notice, index) => {
+            const noticeDiv = document.createElement("div");
+            noticeDiv.classList.add("notice");
+            
+            const title = document.createElement("p");
+            title.innerHTML = `<strong>${notice.title}</strong>`;
+            
+            const message = document.createElement("p");
+            message.textContent = notice.message;
+            
+            const deleteBtn = document.createElement("button");
+            deleteBtn.textContent = "Delete";
+            deleteBtn.style.marginLeft = "10px";
+            deleteBtn.style.cursor = "pointer";
+            deleteBtn.style.background = "#d9534f";
+            deleteBtn.style.color = "white";
+            deleteBtn.style.border = "none";
+            deleteBtn.style.padding = "5px 8px";
+            deleteBtn.style.borderRadius = "4px";
+            deleteBtn.style.fontSize = "1rem";
+            
+            deleteBtn.addEventListener("click", function () {
+                notices.splice(index, 1);
+                localStorage.setItem("notices", JSON.stringify(notices));
+                displayNotices();
+            });
+            
+            noticeDiv.appendChild(title);
+            noticeDiv.appendChild(message);
+            noticeDiv.appendChild(deleteBtn);
+            
+            noticeBoard.appendChild(noticeDiv);
+        });
     }
-  });
+    
+    displayNotices();
+    
+    // Add new notice
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "N" && event.ctrlKey) { // Press Ctrl + N to add a notice
+            const title = prompt("Enter Notice Title:");
+            const message = prompt("Enter Notice Message:");
+            if (title && message) {
+                notices.push({ title: title.trim(), message: message.trim() });
+                localStorage.setItem("notices", JSON.stringify(notices));
+                displayNotices();
+            }
+        }
+    });
+});
+
   
