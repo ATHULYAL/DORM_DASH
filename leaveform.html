@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leave Form</title>
+    <style>
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #a5b9c0 #2e4756;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #dfe7ea;
+        font-family: "Georgia", serif;
+        text-align: center;
+      }
+
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: background 0.3s, padding-left 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+
+      .content {
+        margin-left: 280px;
+        padding: 20px;
+      }
+
+      .header {
+        margin-left: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+      }
+
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #dfe7ea;
+      }
+
+      .profile span {
+        color: #f0f7fa;
+      }
+
+      .form-section {
+        margin-top: 30px;
+        background: linear-gradient(120deg, #f7fafc, #e6eff2);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        margin-left: 20px;
+        max-width: 1500px;
+      }
+
+      .form-section h3 {
+        color: #2e4756;
+        font-family: "Georgia", serif;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #486a7c;
+        font-family: "Georgia", serif;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #a5b9c0;
+        border-radius: 5px;
+        background-color: #ffffff;
+        font-family: "Palatino Linotype", serif;
+      }
+
+      .btn {
+        background: linear-gradient(90deg, #2e4756, #3b5d6b);
+        color: #f0f7fa;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: "Georgia", serif;
+        transition: background 0.3s;
+        width: 100%;
+      }
+
+      .btn:hover {
+        background: #3b5d6b;
+      }
+    </style>
+    <script src="leaveform.js"></script>
+
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="sdash.html">Dashboard</a>
+      <a href="#">Guidelines</a>
+      <a href="#">Attendance</a>
+      <a href="#">Change Password</a>
+      <a href="sroom.html">Room Details</a>
+      <a href="#">Fee Details</a>
+      <a href="#">Feedback</a>
+      <a href="leaveform.html">Leave Form</a>
+      <a href="login.html">Logout</a>
+    </div>
+
+    <div class="content">
+      <div class="header">
+        <h2>Leave Form</h2>
+        <div class="profile">
+          <img src="https://via.placeholder.com/40" alt="Student" />
+          <span>Student Name</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Submit Leave Request</h3>
+        <form id="leave-form">
+          <div class="form-group">
+            <label for="hostel-name">Hostel Name:</label>
+            <input type="text" id="hostel-name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="student-name">Student Name:</label>
+            <input type="text" id="student-name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="leave-start">Leave Start Date:</label>
+            <input type="date" id="leave-start" required />
+          </div>
+
+          <div class="form-group">
+            <label for="leave-end">Leave End Date:</label>
+            <input type="date" id="leave-end" required />
+          </div>
+
+          <div class="form-group">
+            <label for="purpose">Purpose of Leave:</label>
+            <textarea id="purpose" rows="3" required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="travel-mode">Mode of Travel:</label>
+            <select id="travel-mode" required>
+              <option value="">Select</option>
+              <option value="Bus">Bus</option>
+              <option value="Train">Train</option>
+              <option value="Flight">Flight</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn">Submit</button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("leave-form").addEventListener("submit", function (event) {
+        event.preventDefault();
+        alert("Leave form submitted successfully!");
+        this.reset();
+      });
+    </script>
+  </body>
+</html>
