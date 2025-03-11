@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Student</title>
+    <style>
+      /* Copy styles from addash.html */
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+      }
+
+      /* ...rest of the styles from addash.html... */
+
+      /* Additional styles for edit form */
+      .form-section {
+        margin: 20px;
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .button-group {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn.cancel {
+        background: #dc3545;
+      }
+
+      .btn.cancel:hover {
+        background: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <h1>DORM DASH</h1>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}"
+        >Dashboard</a
+      >
+      <a href="{{ url_for('register', admin_username=admin_username) }}"
+        >Registration</a
+      >
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}"
+        >Attendance</a
+      >
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}"
+        >Room Details</a
+      >
+      <a href="{{ url_for('student_details', admin_username=admin_username) }}"
+        >Student Details</a
+      >
+      <a href="#">Fee Details</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}"
+        >Meal Plan</a
+      >
+      <a href="#">Feedback</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}"
+        >Notice</a
+      >
+      <a href="#">Guidelines</a>
+      <a href="#">Leave Form</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <div class="content">
+      <div class="header">
+        <h2>EDIT STUDENT</h2>
+        <div class="profile">
+          <span>{{ admin_username }}</span>
+          <img src="https://via.placeholder.com/40" alt="Admin" />
+        </div>
+      </div>
+
+      <div class="form-section">
+        <form
+          action="{{ url_for('edit_student', student_id=student.id, admin_username=admin_username) }}"
+          method="POST"
+        >
+          <div class="form-group">
+            <label for="full_name">Full Name</label>
+            <input
+              type="text"
+              id="full_name"
+              name="full_name"
+              value="{{ student.name }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="registration_number">Registration Number</label>
+            <input
+              type="text"
+              id="registration_number"
+              name="registration_number"
+              value="{{ student.registration_number }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea id="address" name="address" required>
+{{ student.address }}</textarea
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value="{{ student.email }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value="{{ student.phone }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="course">Course</label>
+            <input
+              type="text"
+              id="course"
+              name="course"
+              value="{{ student.course }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="academic_year_start">Academic Year Start</label>
+            <input
+              type="text"
+              id="academic_year_start"
+              name="academic_year_start"
+              value="{{ student.academic_year_start }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="academic_year_end">Academic Year End</label>
+            <input
+              type="text"
+              id="academic_year_end"
+              name="academic_year_end"
+              value="{{ student.academic_year_end }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="room_number">Room Number</label>
+            <input
+              type="text"
+              id="room_number"
+              name="room_number"
+              value="{{ student.room_number }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="guardian_name">Guardian Name</label>
+            <input
+              type="text"
+              id="guardian_name"
+              name="guardian_name"
+              value="{{ student.guardian_name }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="guardian_phone">Guardian Phone</label>
+            <input
+              type="tel"
+              id="guardian_phone"
+              name="guardian_phone"
+              value="{{ student.guardian_phone }}"
+              required
+            />
+          </div>
+
+          <div class="button-group">
+            <button type="submit" class="btn">Save Changes</button>
+            <a
+              href="{{ url_for('student_details', admin_username=admin_username) }}"
+              class="btn cancel"
+              >Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

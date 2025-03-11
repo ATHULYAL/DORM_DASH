@@ -89,18 +89,15 @@
         margin-top: 20px;
         background: linear-gradient(120deg, #f7fafc, #dfe7ea);
         padding: 20px;
-        
         border-radius: 12px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         margin-left: 20px;
-        
       }
 
       .notice-section h3 {
         margin: 0 0 20px 0;
         color: #2e4756;
         font-family: "Georgia", serif;
-       
       }
 
       .form-group {
@@ -141,22 +138,17 @@
       }
 
       .remove-section {
-        margin-top: 20px;
+        margin-top: 30px;
         background: linear-gradient(120deg, #f7fafc, #e6eff2);
         padding: 20px;
         border-radius: 12px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         margin-left: 20px;
-        padding-top: 5px;
-        
       }
 
       .remove-section h3 {
         color: #2e4756;
         font-family: "Georgia", serif;
-        /* margin-top: 20px; */
-        
-        
       }
 
       .remove-section label {
@@ -168,31 +160,30 @@
   <body>
     <div class="sidebar">
       <h1>DORM DASH</h1>
-      <a href="addash.html">Dashboard</a>
-      <a href="registration.html">Registration</a>
-      <a href="sdetails.html">Student Details</a>
-      <a href="#">Attendance</a>
-      <a href="adroom.html">Room Details</a>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
       <a href="#">Fee Details</a>
-      <a href="mealplan.html">Meal Plan</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
       <a href="#">Feedback</a>
-      <a href="notice.html">Notice</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+      <a href="#">Guidelines</a>
       <a href="#">Leave Form</a>
-      <a href="login.html">Logout</a>
-    </div>
-
+      <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
     <div class="content">
       <div class="header">
         <h2>NOTICE</h2>
         <div class="profile">
           <img src="https://via.placeholder.com/40" alt="Admin" />
-          <span>Admin Name</span>
+          <span>{{admin_username}}</span>
         </div>
       </div>
 
       <div class="notice-section">
         <h3>Add Notice</h3>
-        <form>
+        <form action="{{ url_for('add_notice') }}" method="post">
           <div class="form-group">
             <label for="title">Title:</label>
             <input type="text" id="title" name="title" />
@@ -211,14 +202,29 @@
 
       <div class="remove-section">
         <h3>Remove Notice</h3>
-        <form>
+        <form action="{{ url_for('delete_notice') }}" method="post">
           <div class="form-group">
             <label for="remove-title">Title:</label>
-            <input type="text" id="remove-title" name="remove-title" />
+            <input type="text" id="remove-title" name="remove-title" required />
           </div>
-          <button type="submit" class="btn">Submit</button>
+          <button type="submit" class="btn">Delete</button>
         </form>
       </div>
+      <div class="notices-list">
+        <h3>Current Notices</h3>
+        {% if notices %}
+            {% for notice in notices %}
+                <div class="notice-card">
+                    <h4>{{ notice.title }}</h4>
+                    <p class="date">Posted on: {{ notice.date.strftime('%Y-%m-%d') }}</p>
+                    <p class="description">{{ notice.description }}</p>
+                    <p class="timestamp">Created at: {{ notice.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No notices available.</p>
+        {% endif %}
+    </div>
     </div>
   </body>
 </html>

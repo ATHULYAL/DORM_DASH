@@ -66,7 +66,7 @@
         color: #f0f7fa;
         margin: 0;
         font-family: "Georgia", serif;
-        margin-left: 0px;
+        margin-left: 10px;
       }
 
       .profile {
@@ -93,7 +93,6 @@
         border-radius: 12px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         margin-left: 20px;
-        padding-top: 3px;
       }
 
       .room-details-section h3 {
@@ -150,18 +149,18 @@
   <body>
     <div class="sidebar">
       <h1>DORM DASH</h1>
-      <a href="addash.html">Dashboard</a>
-      <a href="registration.html">Registration</a>
-      <a href="sdetails.html">Student Details</a>
-      <a href="#">Attendance</a>
-      <a href="adroom.html">Room Details</a>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
       <a href="#">Fee Details</a>
-      <a href="mealplan.html">Meal Plan</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
       <a href="#">Feedback</a>
-      <a href="notice.html">Notice</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+      <a href="#">Guidelines</a>
       <a href="#">Leave Form</a>
-      <a href="login.html">Logout</a>
-    </div>
+      <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
 
     <div class="content">
       <div class="header">
@@ -173,19 +172,42 @@
       </div>
 
       <div class="room-details-section">
-        <h3>Room Details Input</h3>
-        <form>
-          <label
-            >Room No: <input type="text" placeholder="Enter room no"
-          /></label>
-          <label
-            >Capacity: <input type="text" placeholder="Enter room capacity"
-          /></label>
-          <label
-            >Strength: <input type="text" placeholder="Enter room strength"
-          /></label>
-          <button type="submit">Save</button>
+        <h3>Add/Update Room</h3>
+        <form
+          action="{{ url_for('add_room', admin_username=admin_username) }}"
+          method="post"
+        >
+          <div class="form-group">
+            <label for="room_no">Room Number:</label>
+            <input type="number" id="room_no" name="room_no" min="1" required />
+          </div>
+          <div class="form-group">
+            <label for="capacity">Capacity:</label>
+            <input
+              type="number"
+              id="capacity"
+              name="capacity"
+              min="1"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="strength">Current Strength:</label>
+            <input
+              type="number"
+              id="strength"
+              name="strength"
+              min="0"
+              required
+            />
+          </div>
+          <button type="submit" class="btn">Save Room</button>
         </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
       </div>
 
       <table class="table">
@@ -198,24 +220,22 @@
           </tr>
         </thead>
         <tbody>
+          {% if rooms %} {% for room in rooms %}
           <tr>
-            <td>1</td>
-            <td>3</td>
-            <td>3</td>
-            <td class="status occupied">Occupied</td>
+            <td>{{ room.room_no }}</td>
+            <td>{{ room.capacity }}</td>
+            <td>{{ room.strength }}</td>
+            <td
+              class="status {% if room.status == 'Occupied' %}occupied{% else %}vacant{% endif %}"
+            >
+              {{ room.status }}
+            </td>
           </tr>
+          {% endfor %} {% else %}
           <tr>
-            <td>2</td>
-            <td>3</td>
-            <td>2</td>
-            <td class="status vacant">1 Vacancy</td>
+            <td colspan="4">No rooms available</td>
           </tr>
-          <tr>
-            <td>3</td>
-            <td>4</td>
-            <td>0</td>
-            <td class="status vacant">Vacant</td>
-          </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>

@@ -117,26 +117,21 @@
 
       .mess {
         margin-left: 20px;
-        display: flex;
-        justify-content: space-between;
         background: linear-gradient(120deg, #f7fafc, #e6eff2);
         padding: 20px;
+        height: 200px;
         border-radius: 12px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        height: 120px;
       }
+
       .mess h3 {
-        margin-left: 20px;
-        margin: 0 0 20px 0;
         color: #2e4756;
         font-family: "Georgia", serif;
-        margin-top: 5px;
+        margin: 0 0 15px 0;
       }
 
       .mess-image {
-        flex-shrink: 0;
-        margin-bottom: 80px;
-        margin-left: 20px;
+        text-align: center;
       }
 
       .mess-image img {
@@ -151,7 +146,6 @@
     <div class="sidebar">
       <h1>DORM DASH</h1>
       <a href="sdash.html">Dashboard</a>
-      <a href="#">Guidelines</a>
       <a href="#">Attendance</a>
       <a href="#">Change Password</a>
       <a href="sroom.html">Room Details</a>
@@ -172,22 +166,34 @@
 
       <div class="notice-board">
         <h3>Notice Board</h3>
+        {% if notices %} {% for notice in notices %}
         <div class="notice">
-          <p><strong>Last day of fee payment</strong></p>
-          <p>Make sure to clear all dues before the end of the month.</p>
+          <p><strong>{{ notice.title }}</strong></p>
+          <p>{{ notice.description }}</p>
+          <small class="notice-date"
+            >Posted on: {{ notice.date.strftime('%Y-%m-%d') }}</small
+          >
         </div>
+        {% endfor %} {% else %}
         <div class="notice">
-          <p><strong>Farewell Party</strong></p>
-          <p>Join us to bid farewell to our seniors on January 30th.</p>
+          <p>No notices available.</p>
         </div>
+        {% endif %}
       </div>
 
       <div class="mess">
         <h3>Mess</h3>
         <div class="mess-image">
-          <img src="https://via.placeholder.com/200" alt="Mess" />
+            {% if meal_plan %}
+                <img src="{{ url_for('static', filename='uploads/' + meal_plan.file_path) }}" 
+                     alt="Today's Meal Plan"
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/200';">
+                <p class="meal-date">Updated on: {{ meal_plan.meal_date.strftime('%Y-%m-%d') }}</p>
+            {% else %}
+                <img src="https://via.placeholder.com/200" alt="No meal plan available">
+                <p class="meal-date">No meal plan uploaded yet</p>
+            {% endif %}
         </div>
-      </div>
     </div>
   </body>
 </html>

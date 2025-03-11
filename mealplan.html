@@ -140,42 +140,55 @@
   <body>
     <div class="sidebar">
       <h1>DORM DASH</h1>
-      <a href="addash.html">Dashboard</a>
-      <a href="registration.html">Registration</a>
-      <a href="sdetails.html">Student Details</a>
-      <a href="#">Attendance</a>
-      <a href="adroom.html">Room Details</a>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
       <a href="#">Fee Details</a>
-      <a href="mealplan.html">Meal Plan</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
       <a href="#">Feedback</a>
-      <a href="notice.html">Notice</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+      <a href="#">Guidelines</a>
       <a href="#">Leave Form</a>
-      <a href="login.html">Logout</a>
-    </div>
+      <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
 
     <div class="content">
       <div class="header">
         <h2>MEAL PLAN</h2>
         <div class="profile">
           <img src="https://via.placeholder.com/40" alt="Admin" />
-          <span>Admin Name</span>
+          <span>{{admin_username}}</span>
         </div>
       </div>
 
       <div class="meal-plan-section">
         <h3>Upload Meal Plan</h3>
-        <form>
+        <form action="{{ url_for('upload_meal_plan') }}" method="post" enctype="multipart/form-data">
           <div class="form-group">
-            <label for="date">Date:</label>
-            <input type="date" id="date" name="date" />
+              <label for="date">Date:</label>
+              <input type="date" id="date" name="date" required/>
           </div>
           <div class="form-group">
-            <label for="file">Upload File:</label>
-            <input type="file" id="file" name="file" />
+              <label for="file">Upload File:</label>
+              <input type="file" id="file" name="file" accept=".png,.jpg,.jpeg,.gif,.pdf" required/>
           </div>
-          <button type="submit" class="btn">Submit</button>
-        </form>
+          <button type="submit" class="btn">Upload Meal Plan</button>
+      </form>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+      {% endwith %}
       </div>
+      <div class="meal-plans">
+        <h3>Uploaded Meal Plans</h3>
+        <!-- Add a section to display uploaded meal plans here -->
+        <div class="uploaded-files">
+            <!-- This section will be populated with uploaded files -->
+        </div>
     </div>
   </body>
 </html>

@@ -20,21 +20,8 @@
         padding: 20px;
         position: fixed;
         color: #f0f7fa;
-        scrollbar-width: thin;
-        scrollbar-color: #a5b9c0 #2e4756;
       }
-      .sidebar::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    .sidebar::-webkit-scrollbar-thumb {
-        background-color: #a5b9c0;
-        border-radius: 4px;
-    }
-    
-    .sidebar::-webkit-scrollbar-track {
-        background: #2e4756;
-    }
+
       .sidebar h1 {
         font-size: 2rem;
         margin-right: 10px;
@@ -180,40 +167,44 @@
   <body>
     <div class="sidebar">
       <h1>DORM DASH</h1>
-      <a href="addash.html">Dashboard</a>
-      <a href="registration.html">Registration</a>
-      <a href="sdetails.html">Student Details</a>
-      <a href="#">Attendance</a>
-      <a href="adroom.html">Room Details</a>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
+      <a href="{{ url_for('student_details', admin_username=admin_username) }}">Student Details</a>
       <a href="#">Fee Details</a>
-      <a href="mealplan.html">Meal Plan</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
       <a href="#">Feedback</a>
-      <a href="notice.html">Notice</a>
-      <a href="guidelines.html">Guidelines</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}"> Notice</a>
+      <a href="#">Guidelines</a>
       <a href="#">Leave Form </a>
-      <a href="login.html">Logout</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
     </div>
 
     <div class="content">
       <div class="header">
         <h2>DASHBOARD</h2>
         <div class="profile">
+          <span>{{ admin_username }}</span>
           <img src="https://via.placeholder.com/40" alt="Admin" />
-          <span>Admin Name</span>
         </div>
       </div>
 
       <div class="notice-board">
         <h3>Notice Board</h3>
-        <div class="notice">
-          <p><strong>Last day of fee payment</strong></p>
-          <p>Make sure to clear all dues before the end of the month.</p>
-        </div>
-        <div class="notice">
-          <p><strong>Farewell Party</strong></p>
-          <p>Join us to bid farewell to our seniors on January 30th.</p>
-        </div>
-        <script src="addash.js"></script>
-
+        {% if notices %}
+            {% for notice in notices %}
+            <div class="notice">
+                <p><strong>{{ notice.title }}</strong></p>
+                <p>{{ notice.description }}</p>
+                <small class="notice-date">Posted on: {{ notice.date.strftime('%Y-%m-%d') }}</small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="notice">
+                <p>No notices available.</p>
+            </div>
+        {% endif %}
+    </div>
   </body>
 </html>
