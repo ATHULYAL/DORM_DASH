@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fee Details - Dorm Dash</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Fee Details - Dorm Dash</title>
     <style>
         body {
             font-family: "Palatino Linotype", serif;
@@ -12,7 +12,6 @@
             background-color: #eef2f3;
             color: #2b3a42;
         }
-        
         .sidebar {
             width: 260px;
             height: 100vh;
@@ -21,16 +20,12 @@
             position: fixed;
             color: #f0f7fa;
         }
-        
         .sidebar h1 {
             font-size: 2rem;
             text-align: center;
-            margin-right: 10px;
-            margin-bottom: 2rem;
             color: #dfe7ea;
             font-family: "Georgia", serif;
         }
-        
         .sidebar a {
             display: block;
             color: #f0f7fa;
@@ -40,17 +35,14 @@
             border-bottom: 1px solid rgba(240, 247, 250, 0.3);
             transition: background 0.3s, padding-left 0.3s;
         }
-        
         .sidebar a:hover {
             background-color: #3b5d6b;
             padding-left: 10px;
         }
-        
         .content {
-            margin-left: 280px;
+            margin-left: 300px;
             padding: 20px;
         }
-        
         .header {
             display: flex;
             justify-content: space-between;
@@ -59,47 +51,33 @@
             padding: 15px 25px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            margin-left: 20px;
         }
-        
         .header h2 {
             color: #f0f7fa;
             margin: 0;
             font-family: "Georgia", serif;
         }
-        
         .profile {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
         .profile img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             border: 2px solid #dfe7ea;
         }
-        
         .profile span {
             color: #f0f7fa;
         }
-        
         .fee-section {
             margin-top: 10px;
             background: linear-gradient(120deg, #f7fafc, #e6eff2);
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-            margin-left: 20px;
-            padding-top: 3px;
         }
-        
-        .fee-section h3 {
-            color: #2e4756;
-            font-family: "Georgia", serif;
-        }
-        
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -107,7 +85,6 @@
             justify-items: center;
             margin-top: 20px;
         }
-        
         .grid-item {
             background: #f0f7fa;
             padding: 20px;
@@ -119,9 +96,7 @@
             cursor: pointer;
             transition: background 0.3s ease;
             border: 1px solid #a5b9c0;
-            font-family: "Palatino Linotype", serif;
         }
-        
         .grid-item:hover {
             background: #aeb2b5;
         }
@@ -130,41 +105,36 @@
 <body>
     <div class="sidebar">
         <h1>DORM DASH</h1>
-        <a href="addash.html">Dashboard</a>
-        <a href="registration.html">Registration</a>
-        <a href="sdetails.html">Student Details</a>
-        <a href="adminattendance.html">Attendance</a>
-        <a href="adroom.html">Room Details</a>
-        <a href="adfee.html">Fee Details</a>
-        <a href="mealplan.html">Meal Plan</a>
-        <a href="adfeedback.html">Feedback</a>
-        <a href="notice.html">Notice</a>
-        <a href="guidelines.html">Guidelines</a>
-        <a href="#">Leave Form</a>
+        <a href="sdash.html">Dashboard</a>
+        <a href="sguidelines.html" class="active">Guidelines</a>
+        <a href="sattendance.html">Attendance</a>
+        <a href="stuchangepass.html">Change Password</a>
+        <a href="sroom.html">Room Details</a>
+        <a href="sfee.html">Fee Details</a>
+        <a href="sfeedback.html">Feedback</a>
+        <a href="stuleaveform.html">Leave Form</a>
         <a href="login.html">Logout</a>
     </div>
-
     <div class="content">
         <div class="header">
             <h2>FEE DETAILS</h2>
             <div class="profile">
-                <img src="https://via.placeholder.com/40" alt="Admin" />
-                <span>Admin Name</span>
+                <img src="https://via.placeholder.com/40" alt="Student" />
+                <span>Student Name</span>
             </div>
         </div>
-
         <div class="fee-section">
             <h3>FEE DETAILS</h3>
             <div class="grid-container">
-                <div class="grid-item">VIEW</div>
-                <div class="grid-item"><button class="btn" onclick="window.location.href='{{ url_for('add1', admin_username=admin_username) }}'">ADD</button></div>
-                <div class="grid-item">APPROVAL</div>
-                <div class="grid-item">PENDING</div>
-                <div class="grid-item">OVERDUES</div>
-                <div class="grid-item">REPORT</div>
+                <div class="grid-item">VIEW FEES</div>
+                <div class="grid-item">PAYMENT</div>
+                <div class="grid-item">PAYMENT HISTORY</div>
+                <div class="grid-item">PENDING FEES</div>
+                <div class="grid-item">OVERDUE FEES</div>
+                <div class="grid-item">DOWNLOAD RECEIPT</div>
             </div>
         </div>
     </div>
-    <script src="adfee.js"></script>
+    <script src="sfee.js"></script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+<!-- filepath: c:\Users\lincy\Desktop\mp\templates\adfee.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fee Details - Dorm Dash</title>
     <style>
+        /* Existing styles */
         body {
             font-family: "Palatino Linotype", serif;
             margin: 0;
@@ -12,7 +14,7 @@
             background-color: #eef2f3;
             color: #2b3a42;
         }
-        
+
         .sidebar {
             width: 260px;
             height: 100vh;
@@ -21,7 +23,7 @@
             position: fixed;
             color: #f0f7fa;
         }
-        
+
         .sidebar h1 {
             font-size: 2rem;
             text-align: center;
@@ -30,7 +32,7 @@
             color: #dfe7ea;
             font-family: "Georgia", serif;
         }
-        
+
         .sidebar a {
             display: block;
             color: #f0f7fa;
@@ -40,17 +42,17 @@
             border-bottom: 1px solid rgba(240, 247, 250, 0.3);
             transition: background 0.3s, padding-left 0.3s;
         }
-        
+
         .sidebar a:hover {
             background-color: #3b5d6b;
             padding-left: 10px;
         }
-        
+
         .content {
             margin-left: 280px;
             padding: 20px;
         }
-        
+
         .header {
             display: flex;
             justify-content: space-between;
@@ -61,30 +63,30 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             margin-left: 20px;
         }
-        
+
         .header h2 {
             color: #f0f7fa;
             margin: 0;
             font-family: "Georgia", serif;
         }
-        
+
         .profile {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .profile img {
             width: 40px;
             height: 40px;
             border-radius: 50%;
             border: 2px solid #dfe7ea;
         }
-        
+
         .profile span {
             color: #f0f7fa;
         }
-        
+
         .fee-section {
             margin-top: 10px;
             background: linear-gradient(120deg, #f7fafc, #e6eff2);
@@ -94,36 +96,74 @@
             margin-left: 20px;
             padding-top: 3px;
         }
-        
+
         .fee-section h3 {
             color: #2e4756;
             font-family: "Georgia", serif;
         }
-        
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            justify-items: center;
+
+        .form-section {
             margin-top: 20px;
-        }
-        
-        .grid-item {
-            background: #f0f7fa;
+            background: #ffffff;
             padding: 20px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            text-align: center;
-            width: 150px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            border: 1px solid #a5b9c0;
-            font-family: "Palatino Linotype", serif;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        
-        .grid-item:hover {
-            background: #aeb2b5;
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #2e4756;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #3b5d6b;
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-save {
+            background-color: #2e4756;
+            color: white;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
         }
     </style>
 </head>
@@ -154,17 +194,36 @@
         </div>
 
         <div class="fee-section">
-            <h3>FEE DETAILS</h3>
-            <div class="grid-container">
-                <div class="grid-item">VIEW</div>
-                <div class="grid-item"><button class="btn" onclick="window.location.href='{{ url_for('add1', admin_username=admin_username) }}'">ADD</button></div>
-                <div class="grid-item">APPROVAL</div>
-                <div class="grid-item">PENDING</div>
-                <div class="grid-item">OVERDUES</div>
-                <div class="grid-item">REPORT</div>
+            <h3>Add Fee Details</h3>
+            <div class="form-section">
+                <form action="/add_fee" method="POST">
+                    <div class="form-group">
+                        <label for="student_id">Student ID:</label>
+                        <input type="text" id="student_id" name="student_id" placeholder="Enter Student ID" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" name="amount" placeholder="Enter Fee Amount" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="due_date">Due Date:</label>
+                        <input type="date" id="due_date" name="due_date" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" required>
+                            <option value="Paid">Paid</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Overdue">Overdue</option>
+                        </select>
+                    </div>
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-save">Save</button>
+                        <button type="reset" class="btn btn-cancel">Cancel</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    <script src="adfee.js"></script>
 </body>
 </html>

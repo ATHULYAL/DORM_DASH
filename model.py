@@ -44,3 +44,41 @@ class Attendance(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     attendance_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.Enum('Present', 'Absent'), nullable=False)
+
+class Leave(db.Model):
+    __tablename__ = 'leaveform'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(100), nullable=False)
+    class_name = db.Column(db.String(100), nullable=False)
+    leave_from = db.Column(db.Date, nullable=False)
+    leave_until = db.Column(db.Date, nullable=False)
+    place_of_travel = db.Column(db.String(255), nullable=False)
+    mode_of_travel = db.Column(db.String(100), nullable=False)
+    purpose = db.Column(db.String(255), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+
+class StudentCredentials(db.Model):
+    __tablename__ = 'slog'
+    username = db.Column(db.String(100), primary_key=True, nullable=False)
+    password = db.Column(db.String(20), nullable=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False, unique=True)
+    student = db.relationship('Student', backref=db.backref('credentials', uselist=False))
+
+    def __init__(self, username, password, student_id):
+        self.username = username
+        self.password = password
+        self.student_id = student_id
+class FeeDetails(db.Model):
+    __tablename__ = 'fee_details'
+    fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    student_id = db.Column(db.String(50), nullable=False)
+    amount = db.Column(db.Numeric(10, 2), nullable=False)
+    due_date = db.Column(db.Date, nullable=False)
+    status = db.Column(db.Enum('Paid', 'Pending', 'Overdue'), nullable=False)
+    created_at = db.Column(db.DateTime, server_default=db.func.current_timestamp())
+
+    def __init__(self, student_id, amount, due_date, status):
+        self.student_id = student_id
+        self.amount = amount
+        self.due_date = due_date
+        self.status = status

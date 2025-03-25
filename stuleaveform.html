@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Leave Form</title>
+    <style>
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #dfe7ea;
+        font-family: "Georgia", serif;
+        text-align: center;
+      }
+
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+
+      .content {
+        margin-left: 300px;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+      }
+
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+      }
+
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid white;
+        margin-right: 10px;
+      }
+
+      .form-section {
+        background: linear-gradient(120deg, #f7fafc, #e6eff2);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+
+      .submit-btn {
+        background-color: #2e4756;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+
+      .submit-btn:hover {
+        background-color: #3b5d6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="sdash.html">Dashboard</a>
+      <a href="sguidelines.html">Guidelines</a>
+      <a href="sattendance.html">Attendance</a>
+      <a href="stuchangepass.html">Change Password</a>
+      <a href="sroom.html">Room Details</a>
+      <a href="sfee.html">Fee Details</a>
+      <a href="sfeedback.html">Feedback</a>
+      <a href="stuleaveform.html">Leave Form</a>
+      <a href="login.html">Logout</a>
+    </div>
+
+    <div class="content">
+      <div class="header">
+        <h2>LEAVE FORM</h2>
+        <div class="profile">
+          <img src="https://via.placeholder.com/40" alt="Student" />
+          <span>Student Name</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Request Leave</h3>
+        <form action="{{ url_for('submit_leave') }}" method="POST">
+          <input type="hidden" name="student_id" value="{{ student.id }}" />
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value="{{ student.name }}"
+              readonly
+            />
+          </div>
+          <div class="form-group">
+            <label for="class">Class</label>
+            <select id="class" name="class" required>
+              <option value="">Select</option>
+              <option value="S1">S1</option>
+              <option value="S2">S2</option>
+              <option value="S3">S3</option>
+              <option value="S4">S4</option>
+              <option value="S5">S5</option>
+              <option value="S6">S6</option>
+              <option value="S7">S7</option>
+              <option value="S8">S8</option>
+              <option value="MCA S1">MCA S1</option>
+              <option value="MCA S2">MCA S2</option>
+              <option value="MCA S3">MCA S3</option>
+              <option value="MCA S4">MCA S4</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="from">Leave From</label>
+            <input type="date" id="from" name="from" required />
+          </div>
+          <div class="form-group">
+            <label for="to">Leave Until</label>
+            <input type="date" id="to" name="to" required />
+          </div>
+          <div class="form-group">
+            <label for="place">Place of Travel</label>
+            <input type="text" id="place" name="place" required />
+          </div>
+          <div class="form-group">
+            <label for="mode">Mode of Travel</label>
+            <input type="text" id="mode" name="mode" required />
+          </div>
+          <div class="form-group">
+            <label for="purpose">Purpose</label>
+            <input type="text" id="purpose" name="purpose" required />
+          </div>
+          <button type="submit" class="submit-btn">Submit</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
