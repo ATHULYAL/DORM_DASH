@@ -30,7 +30,7 @@ def serve_upload(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 # Import models after db initialization
 with app.app_context():
-    from model import Student, Admin, MealPlan, Notice, Room, Attendance
+    from model import Student, Admin, MealPlan, Notice, Room, Attendance,StudentCredentials
 
 @app.route('/')
 def home():
@@ -199,6 +199,21 @@ def edit_student(student_id):
         flash(f'Error updating student: {str(e)}', 'error')
         return redirect(url_for('student_details', admin_username=admin_username))
 
+@app.route('/delete_student/<int:student_id>', methods=['POST'])
+def delete_student(student_id):
+    try:
+        admin_username = request.args.get('admin_username')
+        student = Student.query.get_or_404(student_id)
+
+        # Delete the student record
+        db.session.delete(student)
+        db.session.commit()
+
+        flash('Student deleted successfully!', 'success')
+        return redirect(url_for('student_details', admin_username=admin_username))
+    except Exception as e:
+        flash(f'Error deleting student: {str(e)}', 'error')
+        return redirect(url_for('student_details', admin_username=admin_username))
 
 @app.route('/test_db')
 def test_db():
@@ -504,6 +519,12 @@ def mark_attendance():
             'success': False, 
             'message': str(e)
         })
-        
+
+
+    except Exception as e:
+        flash(f'Error loading student details: {str(e)}', 'error')
+        return redirect(url_for('dashboard', admin_username=admin_username))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
