@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from werkzeug.utils import secure_filename
 
-from flask import Flask, render_template, request, redirect, url_for, flash,jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash,jsonify, send_from_directory,session
 from sqlalchemy import text
 from db import db
 
@@ -30,7 +30,7 @@ def serve_upload(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 # Import models after db initialization
 with app.app_context():
-    from model import Student, Admin, MealPlan, Notice, Room, Attendance,StudentCredentials
+    from model import Student, Admin, MealPlan, Notice, Room, Attendance,Stu,FeeDetails
 
 @app.route('/')
 def home():
@@ -77,42 +77,79 @@ def login():
         print(f"Login error details: {str(e)}")  # Debug logging
         flash(f'Login error: {str(e)}', 'error')
         return redirect(url_for('home'))
-@app.route('/dashboard')
-def dashboard():
+@app.route('/student_login', methods=['POST'])
+def student_login():
     try:
-        admin_username = request.args.get('admin_username')
-        if not admin_username:
+        # Get username and password from the form
+        username = request.form['username'].strip()
+        password = request.form['password'].strip()
+
+        print(f"Login attempt - Username: {username}, Password: {password}")  # Debug print
+
+        # Query the stu table for the username and password
+        student_query = text("SELECT username FROM stu WHERE username = :username AND password = :password")
+        result = db.session.execute(student_query, {"username": username, "password": password})
+        student = result.fetchone()
+
+        if student:
+            # If the student exists, redirect to the student dashboard
+            print(f"Login successful for student: {username}")
+            session['student_username'] = username
+            return redirect(url_for('student_dashboard', student_name=username))
+        else:
+            # If the credentials are invalid
+            print("Invalid username or password.")
+            flash('Invalid username or password', 'error')
             return redirect(url_for('home'))
-            
-        # Get the most recent notices from the database
-        notices = Notice.query.order_by(Notice.date.desc()).limit(5).all()
-        
-        return render_template('addash.html', 
-                             admin_username=admin_username,
-                             notices=notices)
-                             
+
     except Exception as e:
-        flash(f'Error loading dashboard: {str(e)}', 'danger')
+        print(f"Login error: {str(e)}")  # Debug print
+        flash('Login failed. Please try again.', 'error')
         return redirect(url_for('home'))
+@app.route('/adfee')
+def adfee():
+    try:
+        admin_username = request.args.get('admin_username', 'Admin')
+
+        # Fetch fee details from the database
+        fees = FeeDetails.query.order_by(FeeDetails.dates.desc()).all()
+
+        return render_template('adfee.html', admin_username=admin_username, fees=fees)
+    except Exception as e:
+        flash(f'Error loading fee details: {str(e)}', 'danger')
+        return redirect(url_for('dashboard', admin_username=admin_username))
+
 @app.route('/student_dashboard')
 def student_dashboard():
     try:
-        student_name = request.args.get('student_name')
-        latest_meal_plan = MealPlan.query.order_by(MealPlan.meal_date.desc()).first()
-        
-        # Debug print
-        if latest_meal_plan:
-            print(f"Meal plan found:")
-            print(f"- File path: {latest_meal_plan.file_path}")
-            print(f"- Full path: {os.path.join(app.static_folder, latest_meal_plan.file_path)}")
-            print(f"- File exists: {os.path.exists(os.path.join(app.static_folder, latest_meal_plan.file_path))}")
-        
-        return render_template('sdash.html',
-                             student_name=student_name,
-                             meal_plan=latest_meal_plan)
-                             
+        # Check if the student is logged in
+        if 'student_username' not in session:
+            flash('Please login first', 'error')
+            return redirect(url_for('home'))
+
+        student_username = session['student_username']
+
+        # Fetch the latest notices from the database
+        notices = Notice.query.order_by(Notice.date.desc()).limit(5).all()
+
+        # Render the student dashboard with notices
+        return render_template('sdash.html', student_name=student_username, notices=notices)
+
     except Exception as e:
-        print(f"Dashboard error: {str(e)}")
+        flash(f'Dashboard error: {str(e)}', 'error')
+        return redirect(url_for('home'))
+    
+@app.route('/dashboard')
+def dashboard():
+    try:
+        admin_username = request.args.get('admin_username', 'Admin')
+
+        # Fetch notices or other data for the dashboard
+        notices = Notice.query.order_by(Notice.date.desc()).limit(5).all()
+
+        return render_template('addash.html', admin_username=admin_username, notices=notices)
+    except Exception as e:
+        flash(f'Error loading dashboard: {str(e)}', 'danger')
         return redirect(url_for('home'))
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -191,7 +228,7 @@ def edit_student(student_id):
             flash('Student updated successfully!', 'success')
             return redirect(url_for('student_details', admin_username=admin_username))
             
-        return render_template('edit_student.html', 
+        return render_template('edit_student.html',
                              student=student,
                              admin_username=admin_username)
                              
@@ -525,6 +562,69 @@ def mark_attendance():
         flash(f'Error loading student details: {str(e)}', 'error')
         return redirect(url_for('dashboard', admin_username=admin_username))
 
+@app.route('/add_fees', methods=['GET', 'POST'])
+def add_fees():
+    try:
+        admin_username = request.args.get('admin_username', 'Admin')
+
+        if request.method == 'POST':
+            # Get form data
+            selected_year = request.form['year']
+            selected_month = request.form['month']
+            selected_batch = request.form['batch']
+            amount = int(request.form['amount'])
+            status = request.form['status']
+
+            # Determine the date for the fees
+            fee_date = f"{selected_year}-{selected_month}-01"
+
+            # Filter students based on the selected batch
+            current_year = datetime.now().year
+            if 'MCA' in selected_batch:
+                if selected_batch == 'MCA 1st Year':
+                    students = Student.query.filter(
+                        Student.course == 'MCA',
+                        current_year - Student.academic_year_start == 0
+                    ).all()
+                else:
+                    students = Student.query.filter(
+                        Student.course == 'MCA',
+                        current_year - Student.academic_year_start == 1
+                    ).all()
+            else:
+                year_map = {
+                    '1st Year': 2024,  # Students who joined in 2024
+                    '2nd Year': 2023,  # Students who joined in 2023
+                    '3rd Year': 2022,  # Students who joined in 2022
+                    '4th Year': 2021   # Students who joined in 2021
+                }
+                join_year = year_map.get(selected_batch)
+                students = Student.query.filter(
+                    Student.course != 'MCA',
+                    Student.academic_year_start == join_year
+                ).all()
+
+            # Add fees for each student
+            for student in students:
+                fee = FeeDetails(
+                    student_id=student.id,
+                    email=student.email,
+                    dates=datetime.strptime(fee_date, '%Y-%m-%d').date(),
+                    amount=amount,
+                    status=status
+                )
+                db.session.add(fee)
+
+            db.session.commit()
+            flash('Fees added successfully for the selected batch!', 'success')
+            return redirect(url_for('add_fees', admin_username=admin_username))
+
+        return render_template('adminaddfee.html', admin_username=admin_username)
+
+    except Exception as e:
+        flash(f'Error adding fees: {str(e)}', 'danger')
+        db.session.rollback()
+        return redirect(url_for('add_fees', admin_username=admin_username))
 
 if __name__ == "__main__":
     app.run(debug=True)

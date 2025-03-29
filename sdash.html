@@ -145,15 +145,15 @@
   <body>
     <div class="sidebar">
       <h1>DORM DASH</h1>
-      <a href="sdash.html">Dashboard</a>
+      <a href="{{ url_for('student_dashboard', student_name=student_name) }}">Dashboard</a>
       <a href="#">Attendance</a>
       <a href="#">Change Password</a>
-      <a href="sroom.html">Room Details</a>
+      <a href="#">Room Details</a>
       <a href="#">Fee Details</a>
       <a href="#">Feedback</a>
-      <a href="#">Leave Form </a>
-      <a href="#">Logout</a>
-    </div>
+      <a href="#">Leave Form</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
 
     <div class="content">
       <div class="header">
@@ -166,21 +166,20 @@
 
       <div class="notice-board">
         <h3>Notice Board</h3>
-        {% if notices %} {% for notice in notices %}
-        <div class="notice">
-          <p><strong>{{ notice.title }}</strong></p>
-          <p>{{ notice.description }}</p>
-          <small class="notice-date"
-            >Posted on: {{ notice.date.strftime('%Y-%m-%d') }}</small
-          >
-        </div>
-        {% endfor %} {% else %}
-        <div class="notice">
-          <p>No notices available.</p>
-        </div>
+        {% if notices %}
+            {% for notice in notices %}
+            <div class="notice">
+                <p><strong>{{ notice.title }}</strong></p>
+                <p>{{ notice.description }}</p>
+                <small class="notice-date">Posted on: {{ notice.date.strftime('%Y-%m-%d') }}</small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="notice">
+                <p>No notices available.</p>
+            </div>
         {% endif %}
-      </div>
-
+    </div>
       <div class="mess">
         <h3>Mess</h3>
         <div class="mess-image">

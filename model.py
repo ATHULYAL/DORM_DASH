@@ -44,3 +44,33 @@ class Attendance(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     attendance_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.Enum('Present', 'Absent'), nullable=False)
+
+class Leave(db.Model):
+    __tablename__ = 'leaveform'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(100), nullable=False)
+    class_name = db.Column(db.String(100), nullable=False)
+    leave_from = db.Column(db.Date, nullable=False)
+    leave_until = db.Column(db.Date, nullable=False)
+    place_of_travel = db.Column(db.String(255), nullable=False)
+    mode_of_travel = db.Column(db.String(100), nullable=False)
+    purpose = db.Column(db.String(255), nullable=False)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+
+class Stu(db.Model):
+    __tablename__ = 'stu'
+    username = db.Column(db.String(100), primary_key=True, nullable=False)
+    password = db.Column(db.String(20), nullable=True)
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+
+class FeeDetails(db.Model):
+    __tablename__ = 'fees'
+    fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    email = db.Column(db.String(100), db.ForeignKey('stu.username'), nullable=False)
+    dates = db.Column(db.Date, nullable=False)
+    amount = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(20), nullable=False)
