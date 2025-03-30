@@ -1,173 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Add Student Fees Details</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Student Fees</title>
     <style>
-      body {
-        font-family: "Palatino Linotype", serif;
-        margin: 0;
-        padding: 0;
-        background-color: #eef2f3;
-        color: #2b3a42;
-      }
-      .sidebar {
-        width: 260px;
-        height: 100vh;
-        background: linear-gradient(180deg, #2e4756, #3b5d6b);
-        padding: 20px;
-        position: fixed;
-        color: #f0f7fa;
-        overflow-y: auto;
-        scrollbar-width: thin;
-        scrollbar-color: #a5b9c0 #2e4756;
-      }
-      .sidebar::-webkit-scrollbar {
-        width: 8px;
-      }
-      .sidebar::-webkit-scrollbar-track {
-        background: #2e4756;
-      }
-      .sidebar::-webkit-scrollbar-thumb {
-        background: #a5b9c0;
-        border-radius: 4px;
-      }
-      .sidebar h1 {
-        font-size: 2rem;
-        text-align: center;
-        color: #dfe7ea;
-        margin-right: 10px;
-        margin-bottom: 2rem;
-        font-family: "Georgia", serif;
-      }
-      .sidebar a {
-        display: block;
-        color: #f0f7fa;
-        text-decoration: none;
-        padding: 12px 0;
-        font-size: 1rem;
-        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
-        transition: background 0.3s, padding-left 0.3s;
-      }
-      .sidebar a:hover {
-        background-color: #3b5d6b;
-        padding-left: 10px;
-      }
-      .content {
-        margin-left: 300px;
-        padding: 20px;
-      }
-      .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: linear-gradient(90deg, #2e4756, #486a7c);
-        padding: 22px 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-      .header h2 {
-        color: #f0f7fa;
-        margin: 0;
-        font-family: "Georgia", serif;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      .form-group label {
-        font-weight: bold;
-        display: block;
-      }
-      .form-group select,
-      .form-group button,
-      .form-group input {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-      }
+        body {
+            font-family: "Palatino Linotype", serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f3;
+            color: #2b3a42;
+        }
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2e4756, #3b5d6b);
+            padding: 20px;
+            position: fixed;
+            color: #f0f7fa;
+        }
+        .content {
+            margin-left: 280px;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background: #2e4756;
+            color: white;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="sidebar">
-      <h1>DORM DASH</h1>
-      <a href="{{ url_for('dashboard', admin_username=admin_username) }}"
-        >Dashboard</a
-      >
-      <a href="registration.html">Registration</a>
-      <a href="sdetails.html">Student Details</a>
-      <a href="adminattendance.html">Attendance</a>
-      <a href="adroom.html">Room Details</a>
-      <a href="adfee.html">Fee Details</a>
-      <a href="mealplan.html">Meal Plan</a>
-      <a href="adfeedback.html">Feedback</a>
-      <a href="notice.html">Notice</a>
-      <a href="guidelines.html">Guidelines</a>
-      <a href="leaveform.html">Leave Form</a>
-      <a href="login.html">Logout</a>
+        <h1>DORM DASH</h1>
+        <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+        <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+        <a href="{{ url_for('add_fees', admin_username=admin_username) }}">Add Fees</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
     </div>
+
     <div class="content">
-      <div class="header">
-        <h2>Add Student Fee Details</h2>
-      </div>
-      <form
-        action="{{ url_for('add_fees', admin_username=admin_username) }}"
-        method="POST"
-      >
-        <div class="form-group">
-          <label for="batch">Select Batch:</label>
-          <select id="batch" name="batch" required>
-            <option value="1st Year">1st Year</option>
-            <option value="2nd Year">2nd Year</option>
-            <option value="3rd Year">3rd Year</option>
-            <option value="4th Year">4th Year</option>
-            <option value="MCA 1st Year">MCA 1st Year</option>
-            <option value="MCA 2nd Year">MCA 2nd Year</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="year">Select Year:</label>
-          <input
-            type="number"
-            id="year"
-            name="year"
-            min="2000"
-            max="2100"
-            value="{{ datetime.now().year }}"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="month">Select Month:</label>
-          <select id="month" name="month" required>
-            <option value="01">January</option>
-            <option value="02">February</option>
-            <option value="03">March</option>
-            <option value="04">April</option>
-            <option value="05">May</option>
-            <option value="06">June</option>
-            <option value="07">July</option>
-            <option value="08">August</option>
-            <option value="09">September</option>
-            <option value="10">October</option>
-            <option value="11">November</option>
-            <option value="12">December</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="amount">Fee Amount:</label>
-          <input type="number" id="amount" name="amount" required />
-        </div>
-        <div class="form-group">
-          <label for="status">Fee Status:</label>
-          <select id="status" name="status" required>
-            <option value="Paid">Paid</option>
-            <option value="Pending">Pending</option>
-            <option value="Overdue">Overdue</option>
-          </select>
-        </div>
-        <button type="submit">Add Fees</button>
-      </form>
+        <h2>Add Student Fees</h2>
+        <form action="{{ url_for('add_fees', admin_username=admin_username) }}" method="GET">
+            <label for="year-select">Select Year:</label>
+            <select id="year-select" name="year" onchange="this.form.submit()">
+                <option value="1st Year" {% if selected_year == '1st Year' %}selected{% endif %}>1st Year</option>
+                <option value="2nd Year" {% if selected_year == '2nd Year' %}selected{% endif %}>2nd Year</option>
+                <option value="3rd Year" {% if selected_year == '3rd Year' %}selected{% endif %}>3rd Year</option>
+                <option value="4th Year" {% if selected_year == '4th Year' %}selected{% endif %}>4th Year</option>
+                <option value="MCA 1st Year" {% if selected_year == 'MCA 1st Year' %}selected{% endif %}>MCA 1st Year</option>
+                <option value="MCA 2nd Year" {% if selected_year == 'MCA 2nd Year' %}selected{% endif %}>MCA 2nd Year</option>
+            </select>
+        </form>
+
+        <form action="{{ url_for('add_fees', admin_username=admin_username) }}" method="POST">
+            <label for="date">Select Date:</label>
+            <input type="date" id="date" name="date" required>
+            <div>
+              <h3>Debug Information</h3>
+              <p>Selected Year: {{ selected_year }}</p>
+              <p>Students: {{ students }}</p>
+          </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reg No.</th>
+                        <th>Student Name</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.registration_number }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>
+                            <input type="hidden" name="student_id" value="{{ student.id }}">
+                            <input type="number" name="amount" required>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not students %}
+                    <tr>
+                        <td colspan="3">No students found for the selected year.</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+
+            <button type="submit">Add Fees</button>
+        </form>
     </div>
-  </body>
+</body>
 </html>

@@ -502,129 +502,87 @@ def attendance():
     except Exception as e:
         flash(f'Error loading attendance page: {str(e)}', 'danger')
         return redirect(url_for('dashboard', admin_username=admin_username))
-@app.route('/mark_attendance', methods=['POST'])
-def mark_attendance():
-    try:
-        student_id = request.form.get('student_id')
-        status = request.form.get('status')
-        date_str = request.form.get('date')
-        
-        if not all([student_id, status, date_str]):
-            return jsonify({
-                'success': False, 
-                'message': 'Missing required fields'
-            })
-
-        # Convert student_id to integer
-        student_id = int(student_id)
-        date = datetime.strptime(date_str, '%Y-%m-%d').date()
-        
-        # Check if student exists
-        student = Student.query.get(student_id)
-        if not student:
-            return jsonify({
-                'success': False,
-                'message': 'Student not found'
-            })
-        
-        # Check if attendance already exists
-        attendance = Attendance.query.filter_by(
-            student_id=student_id,
-            attendance_date=date
-        ).first()
-
-        if attendance:
-            attendance.status = status
-        else:
-            attendance = Attendance(
-                student_id=student_id,
-                attendance_date=date,
-                status=status
-            )
-            db.session.add(attendance)
-
-        db.session.commit()
-        return jsonify({
-            'success': True, 
-            'message': 'Attendance marked successfully'
-        })
-
-    except Exception as e:
-        print(f"Error marking attendance: {str(e)}")  # For debugging
-        db.session.rollback()
-        return jsonify({
-            'success': False, 
-            'message': str(e)
-        })
-
-
-    except Exception as e:
-        flash(f'Error loading student details: {str(e)}', 'error')
-        return redirect(url_for('dashboard', admin_username=admin_username))
-
 @app.route('/add_fees', methods=['GET', 'POST'])
 def add_fees():
     try:
         admin_username = request.args.get('admin_username', 'Admin')
 
         if request.method == 'POST':
-            # Get form data
-            selected_year = request.form['year']
-            selected_month = request.form['month']
-            selected_batch = request.form['batch']
-            amount = int(request.form['amount'])
-            status = request.form['status']
-
-            # Determine the date for the fees
-            fee_date = f"{selected_year}-{selected_month}-01"
-
-            # Filter students based on the selected batch
-            current_year = datetime.now().year
-            if 'MCA' in selected_batch:
-                if selected_batch == 'MCA 1st Year':
-                    students = Student.query.filter(
-                        Student.course == 'MCA',
-                        current_year - Student.academic_year_start == 0
-                    ).all()
-                else:
-                    students = Student.query.filter(
-                        Student.course == 'MCA',
-                        current_year - Student.academic_year_start == 1
-                    ).all()
-            else:
-                year_map = {
-                    '1st Year': 2024,  # Students who joined in 2024
-                    '2nd Year': 2023,  # Students who joined in 2023
-                    '3rd Year': 2022,  # Students who joined in 2022
-                    '4th Year': 2021   # Students who joined in 2021
-                }
-                join_year = year_map.get(selected_batch)
-                students = Student.query.filter(
-                    Student.course != 'MCA',
-                    Student.academic_year_start == join_year
-                ).all()
+            # Process the form data
+            fee_date = request.form['date']
+            student_ids = request.form.getlist('student_id')
+            amounts = request.form.getlist('amount')
 
             # Add fees for each student
-            for student in students:
+            for student_id, amount in zip(student_ids, amounts):
+                # Fetch the student's email from the Student table
+                student = Student.query.get(student_id)
+                if not student:
+                    flash(f"Student with ID {student_id} not found.", "danger")
+                    continue
+
+                # Check if the student's email exists in the stu table
+                stu_entry = Stu.query.filter_by(username=student.email).first()
+                if not stu_entry:
+                    flash(f"Email {student.email} not found in the stu table.", "danger")
+                    continue
+
+                # Insert fee details into the FeeDetails table
                 fee = FeeDetails(
-                    student_id=student.id,
+                    student_id=student_id,
                     email=student.email,
                     dates=datetime.strptime(fee_date, '%Y-%m-%d').date(),
-                    amount=amount,
-                    status=status
+                    amount=int(amount),
+                    status='Not Paid'  # Default status
                 )
                 db.session.add(fee)
 
             db.session.commit()
-            flash('Fees added successfully for the selected batch!', 'success')
+            flash('Fees added successfully!', 'success')
+
+            # Redirect to the same page or a confirmation page
             return redirect(url_for('add_fees', admin_username=admin_username))
 
-        return render_template('adminaddfee.html', admin_username=admin_username)
+        # Handle GET request to fetch students based on the selected year
+        selected_year = request.args.get('year', '1st Year')
+        current_year = datetime.now().year
+        students = []
+
+        if 'MCA' in selected_year:
+            if selected_year == 'MCA 1st Year':
+                students = Student.query.filter(
+                    Student.course == 'MCA',
+                    current_year - Student.academic_year_start == 0
+                ).order_by(Student.name).all()
+            elif selected_year == 'MCA 2nd Year':
+                students = Student.query.filter(
+                    Student.course == 'MCA',
+                    current_year - Student.academic_year_start == 1
+                ).order_by(Student.name).all()
+        else:
+            year_map = {
+                '1st Year': current_year - 0,
+                '2nd Year': current_year - 1,
+                '3rd Year': current_year - 2,
+                '4th Year': current_year - 3
+            }
+            join_year = year_map.get(selected_year)
+            students = Student.query.filter(
+                Student.course != 'MCA',
+                Student.academic_year_start == join_year
+            ).order_by(Student.name).all()
+
+        return render_template(
+            'adminaddfee.html',
+            admin_username=admin_username,
+            students=students,
+            selected_year=selected_year
+        )
 
     except Exception as e:
         flash(f'Error adding fees: {str(e)}', 'danger')
         db.session.rollback()
-        return redirect(url_for('add_fees', admin_username=admin_username))
+        return redirect(url_for('dashboard', admin_username=admin_username))
 
 if __name__ == "__main__":
     app.run(debug=True)
