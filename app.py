@@ -30,7 +30,7 @@ def serve_upload(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 # Import models after db initialization
 with app.app_context():
-    from model import Student, Admin, MealPlan, Notice, Room, Attendance,Stu,FeeDetails
+    from model import Student, Admin, MealPlan, Notice, Room, Attendance,Stu,FeeDetails,Leave
 
 @app.route('/')
 def home():
@@ -80,43 +80,37 @@ def login():
 @app.route('/student_login', methods=['POST'])
 def student_login():
     try:
-        # Get username and password from the form
         username = request.form['username'].strip()
         password = request.form['password'].strip()
 
-        print(f"Login attempt - Username: {username}, Password: {password}")  # Debug print
+        # Check credentials in Stu table
+        stu_query = text("SELECT username FROM stu WHERE username = :username AND password = :password")
+        result = db.session.execute(stu_query, {"username": username, "password": password})
+        student_auth = result.fetchone()
 
-        # Query the stu table for the username and password
-        student_query = text("SELECT username FROM stu WHERE username = :username AND password = :password")
-        result = db.session.execute(student_query, {"username": username, "password": password})
-        student = result.fetchone()
+        if student_auth:
+            # If authenticated, get student details from Student table
+            student = Student.query.filter_by(email=username).first()
+            if student:
+                session['student_username'] = username
+                session['student_id'] = student.id
+                session['student_name'] = student.name
+                return redirect(url_for('student_dashboard', student_name=student.name))
 
-        if student:
-            # If the student exists, redirect to the student dashboard
-            print(f"Login successful for student: {username}")
-            session['student_username'] = username
-            return redirect(url_for('student_dashboard', student_name=username))
-        else:
-            # If the credentials are invalid
-            print("Invalid username or password.")
-            flash('Invalid username or password', 'error')
-            return redirect(url_for('home'))
+        flash('Invalid username or password', 'error')
+        return redirect(url_for('home'))
 
     except Exception as e:
-        print(f"Login error: {str(e)}")  # Debug print
+        print(f"Login error: {str(e)}")
         flash('Login failed. Please try again.', 'error')
         return redirect(url_for('home'))
-@app.route('/adfee')
+@app.route('/adfee', methods=['GET'])
 def adfee():
     try:
         admin_username = request.args.get('admin_username', 'Admin')
-
-        # Fetch fee details from the database
-        fees = FeeDetails.query.order_by(FeeDetails.dates.desc()).all()
-
-        return render_template('adfee.html', admin_username=admin_username, fees=fees)
+        return render_template('adfee.html', admin_username=admin_username)
     except Exception as e:
-        flash(f'Error loading fee details: {str(e)}', 'danger')
+        flash(f'Error loading Fee Details page: {str(e)}', 'danger')
         return redirect(url_for('dashboard', admin_username=admin_username))
 
 @app.route('/student_dashboard')
@@ -509,7 +503,8 @@ def add_fees():
 
         if request.method == 'POST':
             # Process the form data
-            fee_date = request.form['date']
+            selected_month = request.form['month']
+            selected_year = request.form['year']
             student_ids = request.form.getlist('student_id')
             amounts = request.form.getlist('amount')
 
@@ -531,7 +526,8 @@ def add_fees():
                 fee = FeeDetails(
                     student_id=student_id,
                     email=student.email,
-                    dates=datetime.strptime(fee_date, '%Y-%m-%d').date(),
+                    month=selected_month,
+                    year=int(selected_year),
                     amount=int(amount),
                     status='Not Paid'  # Default status
                 )
@@ -584,5 +580,248 @@ def add_fees():
         db.session.rollback()
         return redirect(url_for('dashboard', admin_username=admin_username))
 
+@app.route('/student_fee_details')
+def student_fee_details():
+    try:
+        # Check if the student is logged in
+        if 'student_username' not in session:
+            flash('Please login first', 'error')
+            return redirect(url_for('home'))
+
+        # Render the sfee.html template
+        return render_template('sfee.html')
+
+    except Exception as e:
+        print(f"Error loading fee details page: {str(e)}")
+        flash('Error loading fee details page', 'error')
+        return redirect(url_for('student_dashboard'))
+
+@app.route('/sview_fee', methods=['GET', 'POST'])
+def sview_fee():
+    try:
+        if request.method == 'POST':
+            # Get form data
+            student_email = request.form['studentEmail']
+            selected_month = request.form['month']
+            selected_year = request.form['year']
+
+            # Query the FeeDetails table for the entered email, month, and year
+            fees = FeeDetails.query.join(Student, FeeDetails.student_id == Student.id).filter(
+                Student.email == student_email,
+                FeeDetails.month == selected_month,
+                FeeDetails.year == int(selected_year)
+            ).all()
+
+            return render_template('sviewfee.html', fees=fees, student_email=student_email, month=selected_month, year=selected_year)
+
+        # Render the form if it's a GET request
+        return render_template('sviewfee.html', fees=None)
+
+    except Exception as e:
+        print(f"Error fetching fee details: {str(e)}")
+        flash('Error fetching fee details. Please try again.', 'error')
+        return redirect(url_for('sfee'))
+@app.route('/submit_payment', methods=['POST'])
+def submit_payment():
+    try:
+        # Get form data
+        student_email = request.form['studentEmail']
+        selected_month = request.form['month']
+        selected_year = request.form['year']
+        transaction_id = request.form['transactionId']
+
+        # Query the FeeDetails table for the entered email, month, and year
+        fee = FeeDetails.query.join(Student, FeeDetails.student_id == Student.id).filter(
+            Student.email == student_email,
+            FeeDetails.month == selected_month,
+            FeeDetails.year == int(selected_year)
+        ).first()
+
+        if not fee:
+            flash('No fee record found for the provided details.', 'error')
+            return redirect(url_for('sfeepayment'))
+
+        # Update the transaction ID and status
+        fee.transaction_id = transaction_id
+        fee.status = 'Waiting'
+        db.session.commit()
+
+        flash('Payment submitted successfully! Status updated to "Waiting".', 'success')
+        return redirect(url_for('sfee'))
+
+    except Exception as e:
+        print(f"Error submitting payment: {str(e)}")
+        flash('Error submitting payment. Please try again.', 'error')
+        return redirect(url_for('sfeepayment'))
+
+@app.route('/sfeepayment', methods=['GET'])
+def sfeepayment():
+    try:
+        return render_template('sfeepayment.html')
+    except Exception as e:
+        print(f"Error loading payment page: {str(e)}")
+        flash('Error loading payment page. Please try again.', 'error')
+        return redirect(url_for('sfee'))  
+    
+@app.route('/adview_fee', methods=['GET'])
+def adview_fee():
+    try:
+        admin_username = request.args.get('admin_username', 'Admin')
+        return render_template('adviewfee.html', admin_username=admin_username)
+    except Exception as e:
+        print(f"Error loading fee details page: {str(e)}")
+        flash('Error loading fee details page', 'error')
+        return redirect(url_for('dashboard', admin_username=admin_username))
+
+@app.route('/get_fee_details', methods=['GET'])
+def get_fee_details():
+    try:
+        student_year = request.args.get('studentYear')
+        month = request.args.get('month')
+        year = request.args.get('year')
+        current_year = datetime.now().year
+
+        # Determine the academic year start based on student year
+        if 'MCA' in student_year:
+            if student_year == 'MCA 1st Year':
+                students = Student.query.filter(
+                    Student.course == 'MCA',
+                    current_year - Student.academic_year_start == 0
+                )
+            else:  # MCA 2nd Year
+                students = Student.query.filter(
+                    Student.course == 'MCA',
+                    current_year - Student.academic_year_start == 1
+                )
+        else:
+            year_map = {
+                '1st Year': current_year - 0,
+                '2nd Year': current_year - 1,
+                '3rd Year': current_year - 2,
+                '4th Year': current_year - 3
+            }
+            join_year = year_map.get(student_year)
+            students = Student.query.filter(
+                Student.course != 'MCA',
+                Student.academic_year_start == join_year
+            )
+
+        # Join with FeeDetails to get fee information
+        fee_details = FeeDetails.query.join(
+            Student, FeeDetails.student_id == Student.id
+        ).filter(
+            FeeDetails.month == month,
+            FeeDetails.year == int(year),
+            Student.id.in_([s.id for s in students])
+        ).all()
+
+        # Format the data for response
+        fees_data = [{
+            'reg_no': fee.student.registration_number,  # Changed from fee.Student to fee.student
+            'student_name': fee.student.name,           # Changed from fee.Student to fee.student
+            'transaction_id': fee.transaction_id or 'Not Paid',
+            'amount': fee.amount,
+            'status': fee.status,
+            'fee_id': fee.fee_id
+        } for fee in fee_details]
+
+        return jsonify({'success': True, 'fees': fees_data})
+
+    except Exception as e:
+        print(f"Error fetching fee details: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)})
+@app.route('/update_fee_status', methods=['POST'])
+def update_fee_status():
+    try:
+        fee_id = request.json.get('fee_id')
+        action = request.json.get('action')
+
+        fee = FeeDetails.query.get(fee_id)
+        if not fee:
+            return jsonify({'success': False, 'error': 'Fee record not found'})
+
+        if action == 'approve':
+            fee.status = 'Approved'
+        elif action == 'reject':
+            fee.status = 'Rejected'
+
+        db.session.commit()
+        return jsonify({'success': True, 'message': f'Payment {action}d successfully'})
+
+    except Exception as e:
+        print(f"Error updating fee status: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)}) 
+
+@app.route('/stuleaveform')
+def stuleaveform():
+    try:
+        # Check if student is logged in
+        if 'student_username' not in session:
+            flash('Please login first', 'error')
+            return redirect(url_for('home'))
+            
+        # Get student details from database using email
+        student = Student.query.filter_by(email=session['student_username']).first()
+        
+        if not student:
+            flash('Student details not found', 'error')
+            return redirect(url_for('student_dashboard'))
+
+        return render_template('stuleaveform.html', student=student)
+
+    except Exception as e:
+        print(f"Error loading leave form: {str(e)}")
+        flash('Error loading leave form', 'error')
+        return redirect(url_for('student_dashboard'))
+    
+@app.route('/submit_leave', methods=['POST'])
+def submit_leave():
+    try:
+        # Debug print
+        print("Starting leave submission...")
+        print("Form data:", request.form.to_dict())
+
+        # Validate session
+        if 'student_username' not in session:
+            raise Exception("No student in session")
+
+        # Get student
+        student = Student.query.filter_by(email=session['student_username']).first()
+        if not student:
+            raise Exception("Student not found")
+
+        # Create leave request
+        new_leave = Leave(
+            student_id=student.id,
+            name=student.name,
+            email=student.email,
+            class_name=request.form.get('class'),
+            leave_from=datetime.strptime(request.form.get('from'), '%Y-%m-%d').date(),
+            leave_until=datetime.strptime(request.form.get('to'), '%Y-%m-%d').date(),
+            place_of_travel=request.form.get('place'),
+            mode_of_travel=request.form.get('mode'),
+            purpose=request.form.get('purpose'),
+            status='Pending'
+        )
+
+        # Debug print
+        print("Created leave object:", vars(new_leave))
+
+        # Save to database
+        db.session.add(new_leave)
+        db.session.commit()
+
+        print("Leave request saved successfully")
+        flash('Leave request submitted successfully!', 'success')
+        return redirect(url_for('stuleaveform'))
+
+    except Exception as e:
+        import traceback
+        print("Error in submit_leave:")
+        print(traceback.format_exc())
+        db.session.rollback()
+        flash(f'Error submitting leave request: {str(e)}', 'error')
+        return redirect(url_for('stuleaveform'))
+    
 if __name__ == "__main__":
     app.run(debug=True)

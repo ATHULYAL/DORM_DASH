@@ -66,38 +66,28 @@
         padding: 22px 25px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        
       }
       .header h2 {
         color: #f0f7fa;
         margin: 0;
         font-family: "Georgia", serif;
       }
-      .profile {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+      .detail {
+        margin-top: 25px;
       }
-      .profile img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border: 2px solid #dfe7ea;
-      }
-      .profile span {
-        color: #f0f7fa;
-      }
-      .form-group {
-        margin-bottom: 15px;
-      }
-      .form-group label {
+      .detail label {
         font-weight: bold;
         display: block;
+        margin-bottom: 5px;
       }
-      .form-group select, .form-group button, .form-group input {
+      .detail select,
+      .detail input,
+      .detail button {
         width: 100%;
         padding: 10px;
-        margin-top: 5px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
       }
       table {
         width: 100%;
@@ -105,7 +95,9 @@
         background: white;
         margin-top: 20px;
       }
-      table, th, td {
+      table,
+      th,
+      td {
         border: 1px solid #ccc;
         padding: 10px;
         text-align: left;
@@ -114,8 +106,20 @@
         background: #3b5d6b;
         color: white;
       }
-      .detail{
-        margin-top: 25px;
+      .action-buttons button {
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .approve-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+      .reject-btn {
+        background-color: #f44336;
+        color: white;
       }
     </style>
   </head>
@@ -140,37 +144,156 @@
         <h2>View Student Fee Details</h2>
       </div>
       <div class="detail">
-      <label for="studentYear">Select Student Year:</label>
-      <select id="studentYear">
-        <option value="01">First Year</option>
-        <option value="02">Second Year</option>
-        <option value="03">Third Year</option>
-        <option value="04">Fourth Year</option>
-        <option value="05">MCA First Year</option>
-        <option value="06">MCA Second Year</option>
-      </select>
-      <label for="year">Select Date:</label>
-      <input type="date" id="year" />
-      <button onclick="fetchFees()">View Fees</button>
-    </div>
+        <label for="studentYear">Select Student Year:</label>
+        <select id="studentYear">
+          <option value="1st Year">1st Year</option>
+          <option value="2nd Year">2nd Year</option>
+          <option value="3rd Year">3rd Year</option>
+          <option value="4th Year">4th Year</option>
+          <option value="MCA 1st Year">MCA 1st Year</option>
+          <option value="MCA 2nd Year">MCA 2nd Year</option>
+        </select>
+        <label for="month">Select Month:</label>
+        <select id="month">
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+        </select>
+        <label for="year">Enter Year:</label>
+        <input type="text" id="year" placeholder="Enter Year (e.g., 2025)" />
+        <button onclick="fetchFees()">View Fees</button>
+      </div>
       <table id="feesTable">
         <thead>
           <tr>
             <th>Reg No.</th>
             <th>Student Name</th>
-            <th>Year</th>
-            <th>Month</th>
+            <th>Transaction ID</th>
             <th>Amount</th>
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
-        <tbody></tbody>
+        <tbody>
+          <tr>
+            <td>12345</td>
+            <td>John Doe</td>
+            <td>TXN123456</td>
+            <td>$500</td>
+            <td>Waiting</td>
+            <td class="action-buttons">
+              <button class="approve-btn" onclick="approvePayment(12345)">
+                Approve
+              </button>
+              <button class="reject-btn" onclick="rejectPayment(12345)">
+                Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
     <script>
-      window.onload = function() {
-        document.getElementById("year").value = new Date().getFullYear() + "-01-01";
-      };
+      function fetchFees() {
+        const studentYear = document.getElementById("studentYear").value;
+        const year = document.getElementById("year").value;
+        const month = document.getElementById("month").value;
+
+        // Make API call to fetch fee details
+        fetch(
+          `/get_fee_details?studentYear=${encodeURIComponent(
+            studentYear
+          )}&month=${encodeURIComponent(month)}&year=${encodeURIComponent(
+            year
+          )}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              updateTable(data.fees);
+            } else {
+              alert("Error fetching fee details: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error fetching fee details");
+          });
+      }
+
+      function updateTable(fees) {
+        const tbody = document.querySelector("#feesTable tbody");
+        tbody.innerHTML = ""; // Clear existing rows
+
+        fees.forEach((fee) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                  <td>${fee.reg_no}</td>
+                  <td>${fee.student_name}</td>
+                  <td>${fee.transaction_id}</td>
+                  <td>${fee.amount}</td>
+                  <td>${fee.status}</td>
+                  <td class="action-buttons">
+                      ${
+                        fee.status === "Waiting"
+                          ? `
+                          <button class="approve-btn" onclick="approvePayment(${fee.fee_id})">
+                              Approve
+                          </button>
+                          <button class="reject-btn" onclick="rejectPayment(${fee.fee_id})">
+                              Reject
+                          </button>
+                      `
+                          : fee.status
+                      }
+                  </td>
+              `;
+          tbody.appendChild(row);
+        });
+      }
+
+      function approvePayment(feeId) {
+        updatePaymentStatus(feeId, "approve");
+      }
+
+      function rejectPayment(feeId) {
+        updatePaymentStatus(feeId, "reject");
+      }
+
+      function updatePaymentStatus(feeId, action) {
+        fetch("/update_fee_status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fee_id: feeId,
+            action: action,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert(`Payment ${action}d successfully`);
+              fetchFees(); // Refresh the table
+            } else {
+              alert("Error updating payment status: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error updating payment status");
+          });
+      }
     </script>
   </body>
 </html>

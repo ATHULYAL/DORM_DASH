@@ -48,14 +48,19 @@ class Attendance(db.Model):
 class Leave(db.Model):
     __tablename__ = 'leaveform'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), db.ForeignKey('stu.username'), nullable=False)
     class_name = db.Column(db.String(100), nullable=False)
     leave_from = db.Column(db.Date, nullable=False)
     leave_until = db.Column(db.Date, nullable=False)
     place_of_travel = db.Column(db.String(255), nullable=False)
     mode_of_travel = db.Column(db.String(100), nullable=False)
     purpose = db.Column(db.String(255), nullable=False)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='Pending')
+    
+    # Update relationship
+    student = db.relationship('Student', backref='leaves', foreign_keys=[student_id])
 
 class Stu(db.Model):
     __tablename__ = 'stu'
@@ -71,6 +76,10 @@ class FeeDetails(db.Model):
     fee_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
     email = db.Column(db.String(100), db.ForeignKey('stu.username'), nullable=False)
-    dates = db.Column(db.Date, nullable=False)
+    month = db.Column(db.String(20), nullable=False)  # Store the month as a string
+    year = db.Column(db.Integer, nullable=False)  # Store the year as an integer
     amount = db.Column(db.Integer, nullable=False)
-    status = db.Column(db.String(20), nullable=False)
+    status = db.Column(db.String(20), nullable=False, default='Not Paid')
+    transaction_id = db.Column(db.String(100), nullable=True) 
+    
+    student = db.relationship('Student', backref='fee_details')

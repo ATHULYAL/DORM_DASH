@@ -50,56 +50,68 @@
     </div>
 
     <div class="content">
-        <h2>Add Student Fees</h2>
-        <form action="{{ url_for('add_fees', admin_username=admin_username) }}" method="GET">
-            <label for="year-select">Select Year:</label>
-            <select id="year-select" name="year" onchange="this.form.submit()">
-                <option value="1st Year" {% if selected_year == '1st Year' %}selected{% endif %}>1st Year</option>
-                <option value="2nd Year" {% if selected_year == '2nd Year' %}selected{% endif %}>2nd Year</option>
-                <option value="3rd Year" {% if selected_year == '3rd Year' %}selected{% endif %}>3rd Year</option>
-                <option value="4th Year" {% if selected_year == '4th Year' %}selected{% endif %}>4th Year</option>
-                <option value="MCA 1st Year" {% if selected_year == 'MCA 1st Year' %}selected{% endif %}>MCA 1st Year</option>
-                <option value="MCA 2nd Year" {% if selected_year == 'MCA 2nd Year' %}selected{% endif %}>MCA 2nd Year</option>
-            </select>
-        </form>
-
-        <form action="{{ url_for('add_fees', admin_username=admin_username) }}" method="POST">
-            <label for="date">Select Date:</label>
-            <input type="date" id="date" name="date" required>
-            <div>
-              <h3>Debug Information</h3>
-              <p>Selected Year: {{ selected_year }}</p>
-              <p>Students: {{ students }}</p>
-          </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Reg No.</th>
-                        <th>Student Name</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for student in students %}
-                    <tr>
-                        <td>{{ student.registration_number }}</td>
-                        <td>{{ student.name }}</td>
-                        <td>
-                            <input type="hidden" name="student_id" value="{{ student.id }}">
-                            <input type="number" name="amount" required>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    {% if not students %}
-                    <tr>
-                        <td colspan="3">No students found for the selected year.</td>
-                    </tr>
-                    {% endif %}
-                </tbody>
-            </table>
-
-            <button type="submit">Add Fees</button>
-        </form>
-    </div>
+      <h2>Add Student Fees</h2>
+      <form action="{{ url_for('add_fees', admin_username=admin_username) }}" method="GET">
+          <label for="year-select">Select Year:</label>
+          <select id="year-select" name="year" onchange="this.form.submit()">
+              <option value="1st Year" {% if selected_year == '1st Year' %}selected{% endif %}>1st Year</option>
+              <option value="2nd Year" {% if selected_year == '2nd Year' %}selected{% endif %}>2nd Year</option>
+              <option value="3rd Year" {% if selected_year == '3rd Year' %}selected{% endif %}>3rd Year</option>
+              <option value="4th Year" {% if selected_year == '4th Year' %}selected{% endif %}>4th Year</option>
+              <option value="MCA 1st Year" {% if selected_year == 'MCA 1st Year' %}selected{% endif %}>MCA 1st Year</option>
+              <option value="MCA 2nd Year" {% if selected_year == 'MCA 2nd Year' %}selected{% endif %}>MCA 2nd Year</option>
+          </select>
+      </form>
+  
+      <form action="{{ url_for('add_fees', admin_username=admin_username) }}" method="POST">
+          <label for="month">Select Month:</label>
+          <select id="month" name="month" required>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+          </select>
+  
+          <label for="year">Enter Year:</label>
+          <input type="text" id="year" name="year" required>
+  
+          <table>
+              <thead>
+                  <tr>
+                      <th>Reg No.</th>
+                      <th>Student Name</th>
+                      <th>Amount</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for student in students %}
+                  <tr>
+                      <td>{{ student.registration_number }}</td>
+                      <td>{{ student.name }}</td>
+                      <td>
+                          <input type="hidden" name="student_id" value="{{ student.id }}">
+                          <input type="number" name="amount" required>
+                      </td>
+                  </tr>
+                  {% endfor %}
+                  {% if not students %}
+                  <tr>
+                      <td colspan="3">No students found for the selected year.</td>
+                  </tr>
+                  {% endif %}
+              </tbody>
+          </table>
+  
+          <button type="submit">Add Fees</button>
+      </form>
+  </div>
 </body>
 </html>
