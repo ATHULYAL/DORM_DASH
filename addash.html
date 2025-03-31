@@ -177,7 +177,7 @@
       <a href="#">Feedback</a>
       <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
       <a href="#">Guidelines</a>
-      <a href="#">Leave Form</a>
+      <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}">Leave Form</a>
       <a href="{{ url_for('logout') }}">Logout</a>
 </div>
 

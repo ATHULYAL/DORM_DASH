@@ -755,73 +755,65 @@ def update_fee_status():
 @app.route('/stuleaveform')
 def stuleaveform():
     try:
-        # Check if student is logged in
-        if 'student_username' not in session:
-            flash('Please login first', 'error')
-            return redirect(url_for('home'))
-            
-        # Get student details from database using email
-        student = Student.query.filter_by(email=session['student_username']).first()
-        
-        if not student:
-            flash('Student details not found', 'error')
-            return redirect(url_for('student_dashboard'))
+        return render_template('stuleaveform.html')
+    except Exception as e:
+        print(f"Error loading leave form: {str(e)}")
+        flash('Error loading leave form', 'error')
+        return redirect(url_for('home'))
 
-        return render_template('stuleaveform.html', student=student)
+@app.route('/submit_leave', methods=['POST'])
+def submit_leave():
+    try:
+        # Create new leave request
+        new_leave = Leave(
+            student_id=request.form['student_id'],  # Add this line
+            name=request.form['name'],
+            email=request.form['email'],
+            class_name=request.form['class'],
+            leave_from=datetime.strptime(request.form['from'], '%Y-%m-%d').date(),
+            leave_until=datetime.strptime(request.form['to'], '%Y-%m-%d').date(),
+            place_of_travel=request.form['place'],
+            mode_of_travel=request.form['mode'],
+            purpose=request.form['purpose']
+        )
+
+        db.session.add(new_leave)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'Leave request submitted successfully!'})
+
+    except Exception as e:
+        print(f"Error submitting leave request: {str(e)}")
+        db.session.rollback()
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/admin_leave_form', methods=['GET', 'POST'])
+def admin_leave_form():
+    try:
+        admin_username = request.args.get('admin_username', 'Admin')
+        selected_date = request.args.get('date')
+        
+        if selected_date:
+            # Convert string date to datetime
+            search_date = datetime.strptime(selected_date, '%Y-%m-%d').date()
+            
+            # Query leaves that include the selected date
+            leaves = Leave.query.filter(
+                Leave.leave_from <= search_date,
+                Leave.leave_until >= search_date
+            ).all()
+        else:
+            leaves = []
+
+        return render_template('leaveform.html', 
+                            admin_username=admin_username,
+                            leaves=leaves,
+                            selected_date=selected_date)
 
     except Exception as e:
         print(f"Error loading leave form: {str(e)}")
         flash('Error loading leave form', 'error')
-        return redirect(url_for('student_dashboard'))
-    
-@app.route('/submit_leave', methods=['POST'])
-def submit_leave():
-    try:
-        # Debug print
-        print("Starting leave submission...")
-        print("Form data:", request.form.to_dict())
-
-        # Validate session
-        if 'student_username' not in session:
-            raise Exception("No student in session")
-
-        # Get student
-        student = Student.query.filter_by(email=session['student_username']).first()
-        if not student:
-            raise Exception("Student not found")
-
-        # Create leave request
-        new_leave = Leave(
-            student_id=student.id,
-            name=student.name,
-            email=student.email,
-            class_name=request.form.get('class'),
-            leave_from=datetime.strptime(request.form.get('from'), '%Y-%m-%d').date(),
-            leave_until=datetime.strptime(request.form.get('to'), '%Y-%m-%d').date(),
-            place_of_travel=request.form.get('place'),
-            mode_of_travel=request.form.get('mode'),
-            purpose=request.form.get('purpose'),
-            status='Pending'
-        )
-
-        # Debug print
-        print("Created leave object:", vars(new_leave))
-
-        # Save to database
-        db.session.add(new_leave)
-        db.session.commit()
-
-        print("Leave request saved successfully")
-        flash('Leave request submitted successfully!', 'success')
-        return redirect(url_for('stuleaveform'))
-
-    except Exception as e:
-        import traceback
-        print("Error in submit_leave:")
-        print(traceback.format_exc())
-        db.session.rollback()
-        flash(f'Error submitting leave request: {str(e)}', 'error')
-        return redirect(url_for('stuleaveform'))
+        return redirect(url_for('dashboard', admin_username=admin_username))
     
 if __name__ == "__main__":
     app.run(debug=True)

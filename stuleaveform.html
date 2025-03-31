@@ -126,7 +126,6 @@
       <a href="sguidelines.html">Guidelines</a>
       <a href="sattendance.html">Attendance</a>
       <a href="stuchangepass.html">Change Password</a>
-      <a href="sroom.html">Room Details</a>
       <a href="sfee.html">Fee Details</a>
       <a href="sfeedback.html">Feedback</a>
       <a href="stuleaveform.html">Leave Form</a>
@@ -144,63 +143,64 @@
       <div class="form-section">
         <h3>Request Leave</h3>
         <form action="{{ url_for('submit_leave') }}" method="POST" id="leaveForm">
-          <!-- Add CSRF token if using Flask-WTF -->
-          {{ form.csrf_token if form }}
-          
-          <div class="form-group">
-              <label for="name">Name</label>
-              <input type="text" id="name" name="name" value="{{ student.name }}" readonly />
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required />
+            </div>
+    
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required />
+            </div>
+
+            <div class="form-group">
+              <label for="student_id">Student ID</label>
+              <input type="text" id="student_id" name="student_id" required />
           </div>
-      
-          <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" value="{{ student.email }}" readonly />
-          </div>
-      
-          <div class="form-group">
-              <label for="class">Class</label>
-              <input type="text" id="class" name="class" value="{{ student.course }}" readonly />
-          </div>
-      
-          <div class="form-group">
-              <label for="from">From Date</label>
-              <input type="date" id="from" name="from" required />
-          </div>
-      
-          <div class="form-group">
-              <label for="to">To Date</label>
-              <input type="date" id="to" name="to" required />
-          </div>
-      
-          <div class="form-group">
-              <label for="place">Place of Travel</label>
-              <input type="text" id="place" name="place" required />
-          </div>
-      
-          <div class="form-group">
-              <label for="mode">Mode of Travel</label>
-              <select id="mode" name="mode" required>
-                  <option value="">Select mode of travel</option>
-                  <option value="Bus">Bus</option>
-                  <option value="Train">Train</option>
-                  <option value="Flight">Flight</option>
-                  <option value="Car">Car</option>
-                  <option value="Other">Other</option>
-              </select>
-          </div>
-      
-          <div class="form-group">
-              <label for="purpose">Purpose of Leave</label>
-              <textarea id="purpose" name="purpose" rows="4" required></textarea>
-          </div>
-      
-          <div class="form-group">
-              <button type="submit" class="submit-btn">Submit Leave Request</button>
-          </div>
-      </form>
-      </div>
+    
+            <div class="form-group">
+                <label for="class">Class</label>
+                <input type="text" id="class" name="class" required />
+            </div>
+    
+            <div class="form-group">
+                <label for="from">From Date</label>
+                <input type="date" id="from" name="from" required />
+            </div>
+    
+            <div class="form-group">
+                <label for="to">To Date</label>
+                <input type="date" id="to" name="to" required />
+            </div>
+    
+            <div class="form-group">
+                <label for="place">Place of Travel</label>
+                <input type="text" id="place" name="place" required />
+            </div>
+    
+            <div class="form-group">
+                <label for="mode">Mode of Travel</label>
+                <select id="mode" name="mode" required>
+                    <option value="">Select mode of travel</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Train">Train</option>
+                    <option value="Flight">Flight</option>
+                    <option value="Car">Car</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+    
+            <div class="form-group">
+                <label for="purpose">Purpose of Leave</label>
+                <textarea id="purpose" name="purpose" rows="4" required></textarea>
+            </div>
+    
+            <div class="form-group">
+                <button type="submit" class="submit-btn">Submit Leave Request</button>
+            </div>
+        </form>
     </div>
-    // Add this before </body> tag in stuleaveform.html
+    
     <script>
       document.addEventListener('DOMContentLoaded', function() {
           const form = document.getElementById('leaveForm');
@@ -212,7 +212,7 @@
           fromDate.min = today;
           toDate.min = today;
       
-          form.addEventListener('submit', async function(e) {
+          form.addEventListener('submit', function(e) {
               e.preventDefault();
       
               // Validate dates
@@ -221,35 +221,29 @@
       
               if (from > to) {
                   alert('To date must be after From date');
-                  return;
+                  return false;
               }
       
-              // Show loading state
-              const submitBtn = form.querySelector('button[type="submit"]');
-              submitBtn.disabled = true;
-              submitBtn.textContent = 'Submitting...';
-      
-              try {
-                  const response = await fetch(form.action, {
-                      method: 'POST',
-                      body: new FormData(form)
-                  });
-      
-                  const result = await response.json();
-      
-                  if (result.success) {
-                      alert('Leave request submitted successfully!');
-                      window.location.reload();
+              // If validation passes, submit the form
+              const formData = new FormData(form);
+              
+              fetch(form.action, {
+                  method: 'POST',
+                  body: formData
+              })
+              .then(response => response.json())  // Changed from text() to json()
+              .then(data => {
+                  if (data.success) {
+                      alert(data.message);
+                      form.reset();  // Reset form on success
                   } else {
-                      alert(result.error || 'Error submitting leave request');
+                      alert(data.error || 'Error submitting leave request');
                   }
-              } catch (error) {
+              })
+              .catch(error => {
                   console.error('Error:', error);
-                  alert('Error submitting leave request');
-              } finally {
-                  submitBtn.disabled = false;
-                  submitBtn.textContent = 'Submit Leave Request';
-              }
+                  alert('Error submitting leave request. Please try again.');
+              });
           });
       
           fromDate.addEventListener('change', function() {

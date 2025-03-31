@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Student Fee Details - Dorm Dash</title>
+    <title>Student Attendance - Dorm Dash</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       body {
         font-family: "Palatino Linotype", serif;
@@ -19,14 +20,13 @@
         padding: 20px;
         position: fixed;
         color: #f0f7fa;
+        overflow-y: auto;
       }
       .sidebar h1 {
-        font-size: 2rem;
         text-align: center;
+        font-size: 2rem;
         color: #dfe7ea;
         font-family: "Georgia", serif;
-        margin-right: 10px;
-        margin-bottom: 2rem;
       }
       .sidebar a {
         display: block;
@@ -37,7 +37,8 @@
         border-bottom: 1px solid rgba(240, 247, 250, 0.3);
         transition: background 0.3s, padding-left 0.3s;
       }
-      .sidebar a:hover {
+      .sidebar a:hover,
+      .sidebar a.active {
         background-color: #3b5d6b;
         padding-left: 10px;
       }
@@ -53,11 +54,9 @@
         padding: 15px 25px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      }
-      .header h2 {
         color: #f0f7fa;
-        margin: 0;
         font-family: "Georgia", serif;
+        margin-bottom: 20px;
       }
       .profile {
         display: flex;
@@ -73,34 +72,35 @@
       .profile span {
         color: #f0f7fa;
       }
-      .fee-section {
-        margin-top: 10px;
+      .attendance-section {
+        margin-top: 20px;
         background: linear-gradient(120deg, #f7fafc, #e6eff2);
         padding: 20px;
         border-radius: 12px;
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-      }
-      .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-        justify-items: center;
-        margin-top: 20px;
-      }
-      .grid-item {
-        background: #f0f7fa;
-        padding: 20px;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: bold;
         text-align: center;
-        width: 150px;
-        cursor: pointer;
-        transition: background 0.3s ease;
-        border: 1px solid #a5b9c0;
       }
-      .grid-item:hover {
-        background: #aeb2b5;
+      .chart-container {
+        width: 300px;
+        height: 300px;
+        margin: auto;
+      }
+      .attendance-info {
+        margin-top: 20px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #2e4756;
+      }
+      .absent-dates {
+        margin-top: 20px;
+        background: #f0f7fa;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .absent-dates h4 {
+        margin: 0;
+        color: #d9534f;
       }
     </style>
   </head>
@@ -108,30 +108,34 @@
     <div class="sidebar">
       <h1>DORM DASH</h1>
       <a href="sdash.html">Dashboard</a>
-      <a href="sguidelines.html" class="active">Guidelines</a>
+      <a href="sguidelines.html">Guidelines</a>
       <a href="sattendance.html">Attendance</a>
       <a href="stuchangepass.html">Change Password</a>
       <a href="sfee.html">Fee Details</a>
       <a href="sfeedback.html">Feedback</a>
-      <a href="stuleaveform.html">Leave Form</a>
+      <a href="stuleaveform.html">Leave Form </a>
       <a href="login.html">Logout</a>
     </div>
     <div class="content">
       <div class="header">
-        <h2>FEE DETAILS</h2>
-        <div class="profile">
-          <img src="https://via.placeholder.com/40" alt="Student" />
-          <span>Student Name</span>
-        </div>
+        <h2>STUDENT ATTENDANCE</h2>
       </div>
-      <div class="fee-section">
-        <h3>FEE DETAILS</h3>
-        <div class="grid-container">
-          <a href="{{ url_for('sview_fee') }}" class="grid-item">VIEW FEES</a>
-          <a href="{{ url_for('sfeepayment') }}" class="grid-item">PAYMENT</a>
+      <div class="attendance-section">
+        <h3>Your Attendance Overview</h3>
+        <div class="chart-container">
+          <canvas id="attendanceChart"></canvas>
+        </div>
+        <div class="attendance-info">
+          Attendance: <span id="attendancePercentage">Loading...</span>
+        </div>
+        <div class="absent-dates">
+          <h4>Absent Dates</h4>
+          <ul id="absentList">
+            <li>Loading...</li>
+          </ul>
         </div>
       </div>
     </div>
-    <script src="sfee.js"></script>
+    <script src="sattendance.js"></script>
   </body>
 </html>

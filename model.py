@@ -48,20 +48,18 @@ class Attendance(db.Model):
 class Leave(db.Model):
     __tablename__ = 'leaveform'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    student_id = db.Column(db.Integer, db.ForeignKey('student.id'), nullable=False)
+    student_id = db.Column(db.Integer, nullable=False)  # Add this line
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), db.ForeignKey('stu.username'), nullable=False)
+    email = db.Column(db.String(100), nullable=False)
     class_name = db.Column(db.String(100), nullable=False)
     leave_from = db.Column(db.Date, nullable=False)
     leave_until = db.Column(db.Date, nullable=False)
     place_of_travel = db.Column(db.String(255), nullable=False)
     mode_of_travel = db.Column(db.String(100), nullable=False)
     purpose = db.Column(db.String(255), nullable=False)
-    status = db.Column(db.String(20), nullable=False, default='Pending')
-    
-    # Update relationship
-    student = db.relationship('Student', backref='leaves', foreign_keys=[student_id])
 
+    def __repr__(self):
+        return f'<Leave {self.name} from {self.leave_from} to {self.leave_until}>'
 class Stu(db.Model):
     __tablename__ = 'stu'
     username = db.Column(db.String(100), primary_key=True, nullable=False)
