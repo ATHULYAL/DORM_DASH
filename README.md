@@ -1,5 +1,5 @@
 # DORM_DASH
-hostel management system 
+HOSTEL MANAGEMENT SYSTEM 
 
 **Dorm Dash** is a web-based hostel management system tailored to simplify and manage various administrative tasks within a dormitory. With an intuitive UI and multiple modules, this system handles student records, attendance, fee tracking, meal plans, and more – all in one place.
 
