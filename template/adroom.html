@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room Details</title>
+    <style>
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #dfe7ea;
+        font-family: "Georgia", serif;
+        text-align: center;
+        margin-right: 10px;
+      }
+
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: background 0.3s, padding-left 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+
+      .content {
+        margin-left: 280px;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-left: 20px;
+      }
+
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+        margin-left: 10px;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #dfe7ea;
+      }
+
+      .profile span {
+        color: white;
+      }
+
+      .room-details-section {
+        margin-top: 20px;
+        background: linear-gradient(120deg, #f7fafc, #dfe7ea);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        margin-left: 20px;
+      }
+
+      .room-details-section h3 {
+        color: #2e4756;
+        font-family: "Georgia", serif;
+        margin-bottom: 15px;
+      }
+
+      .room-details {
+        background: #f4f8fb;
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-family: "Palatino Linotype", serif;
+        line-height: 1.8;
+        color: #486a7c;
+        box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .table {
+        margin-top: 20px;
+        width: 98%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        margin-left: 20px;
+        margin-right: 20px;
+      }
+
+      .table th,
+      .table td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+      }
+
+      .table th {
+        background-color: #3b5d6b;
+        color: white;
+      }
+
+      .status {
+        font-weight: bold;
+      }
+
+      .occupied {
+        color: red;
+      }
+
+      .vacant {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
+      <a href="{{ url_for('student_details', admin_username=admin_username) }}">Student Details</a>
+      <a href="{{ url_for('adfee', admin_username=admin_username) }}">View Fees</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
+      <a href="{{ url_for('adfeedback', admin_username=admin_username) }}">Feedback</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+      <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}">Leave Form</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+</div>
+
+    <div class="content">
+      <div class="header">
+        <h2>ROOM DETAILS</h2>
+        <div class="profile">
+          <img src="https://via.placeholder.com/40" alt="Profile" />
+          <span>Admin Name</span>
+        </div>
+      </div>
+
+      <div class="room-details-section">
+        <h3>Add/Update Room</h3>
+        <form
+          action="{{ url_for('add_room', admin_username=admin_username) }}"
+          method="post"
+        >
+          <div class="form-group">
+            <label for="room_no">Room Number:</label>
+            <input type="number" id="room_no" name="room_no" min="1" required />
+          </div>
+          <div class="form-group">
+            <label for="capacity">Capacity:</label>
+            <input
+              type="number"
+              id="capacity"
+              name="capacity"
+              min="1"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="strength">Current Strength:</label>
+            <input
+              type="number"
+              id="strength"
+              name="strength"
+              min="0"
+              required
+            />
+          </div>
+          <button type="submit" class="btn">Save Room</button>
+        </form>
+
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Room No</th>
+            <th>Capacity</th>
+            <th>Strength</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if rooms %} {% for room in rooms %}
+          <tr>
+            <td>{{ room.room_no }}</td>
+            <td>{{ room.capacity }}</td>
+            <td>{{ room.strength }}</td>
+            <td
+              class="status {% if room.status == 'Occupied' %}occupied{% else %}vacant{% endif %}"
+            >
+              {{ room.status }}
+            </td>
+          </tr>
+          {% endfor %} {% else %}
+          <tr>
+            <td colspan="4">No rooms available</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

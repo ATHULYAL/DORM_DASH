@@ -1,0 +1,326 @@
+<!-- filepath: c:\Users\lincy\Desktop\mp\templates\edit_student.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Student</title>
+    <style>
+      /* Base styles */
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      /* Sidebar styles */
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #dfe7ea;
+        font-family: "Georgia", serif;
+        text-align: center;
+      }
+
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: background 0.3s, padding-left 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+
+      /* Content styles */
+      .content {
+        margin-left: 280px;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+      }
+
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+      }
+
+      /* Form section styles */
+      .form-section {
+        background: #ffffff;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #2e4756;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #cbd5e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: border-color 0.3s;
+      }
+
+      .form-group input:focus,
+      .form-group textarea:focus {
+        border-color: #3b5d6b;
+        outline: none;
+      }
+
+      .form-group textarea {
+        height: 100px;
+        resize: vertical;
+      }
+
+      /* Button styles */
+      .button-group {
+        grid-column: 1 / -1;
+        display: flex;
+        gap: 15px;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+
+      .btn {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .btn-save {
+        background-color: #2e4756;
+        color: white;
+      }
+
+      .btn-cancel {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .btn:hover {
+        opacity: 0.9;
+      }
+
+      /* Profile section */
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .profile span {
+        color: white;
+      }
+
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
+      <a href="{{ url_for('student_details', admin_username=admin_username) }}">Student Details</a>
+      <a href="{{ url_for('adfee', admin_username=admin_username) }}">View Fees</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
+      <a href="{{ url_for('adfeedback', admin_username=admin_username) }}">Feedback</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+      <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}">Leave Form</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+</div>
+
+    <div class="content">
+      <div class="header">
+        <h2>Edit Student Details</h2>
+        <div class="profile">
+          <img src="https://via.placeholder.com/40" alt="Admin" />
+          <span>{{ admin_username }}</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <form
+          action="{{ url_for('edit_student', student_id=student.id, admin_username=admin_username) }}"
+          method="POST"
+        >
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="full_name">Full Name:</label>
+              <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                value="{{ student.name }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="registration_number">Registration Number:</label>
+              <input
+                type="text"
+                id="registration_number"
+                name="registration_number"
+                value="{{ student.registration_number }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="address">Address:</label>
+              <input
+                type="text"
+                id="address"
+                name="address"
+                value="{{ student.address }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="email">Email:</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value="{{ student.email }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone:</label>
+              <input
+                type="text"
+                id="phone"
+                name="phone"
+                value="{{ student.phone }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="course">Course:</label>
+              <input
+                type="text"
+                id="course"
+                name="course"
+                value="{{ student.course }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="academic_year_start">Academic Year Start:</label>
+              <input
+                type="number"
+                id="academic_year_start"
+                name="academic_year_start"
+                value="{{ student.academic_year_start }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="academic_year_end">Academic Year End:</label>
+              <input
+                type="number"
+                id="academic_year_end"
+                name="academic_year_end"
+                value="{{ student.academic_year_end }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="room_number">Room Number:</label>
+              <input
+                type="text"
+                id="room_number"
+                name="room_number"
+                value="{{ student.room_number }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="guardian_name">Guardian Name:</label>
+              <input
+                type="text"
+                id="guardian_name"
+                name="guardian_name"
+                value="{{ student.guardian_name }}"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="guardian_phone">Guardian Phone:</label>
+              <input
+                type="text"
+                id="guardian_phone"
+                name="guardian_phone"
+                value="{{ student.guardian_phone }}"
+                required
+              />
+            </div>
+          </div>
+          <div class="button-group">
+            <button type="submit" class="btn btn-save">Save Changes</button>
+            <a
+              href="{{ url_for('student_details', admin_username=admin_username) }}"
+              class="btn btn-cancel"
+              >Cancel</a
+            >
+          </div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

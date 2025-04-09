@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dorm Dash - Login</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #f0f8ff;
+        color: #333;
+      }
+
+      .login-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        width: 360px;
+        max-width: 100%;
+        text-align: center;
+      }
+
+      .login-container h1 {
+        font-size: 2.5rem;
+        color: #185e89;
+        margin-bottom: 1.5rem;
+      }
+
+      .login-container form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form-group {
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        text-align: left;
+      }
+
+      input[type="text"],
+      input[type="password"] {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+
+      input[type="text"]:focus,
+      input[type="password"]:focus {
+        border-color: #185e89;
+        outline: none;
+        box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+      }
+
+      .forgot-password {
+        text-align: right;
+        margin-bottom: 15px;
+      }
+
+      .forgot-password a {
+        font-size: 0.9rem;
+        color: #185e89;
+        text-decoration: none;
+      }
+
+      .forgot-password a:hover {
+        text-decoration: underline;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 14px;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #218838;
+      }
+
+      @media only screen and (max-width: 480px) {
+        .login-container {
+          width: 100%;
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-container">
+      <h1>ADMIN</h1>
+      <form action="/login" method="post">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter admin username"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter admin password"
+            required
+          />
+        </div>
+        <div class="forgot-password">
+          <a href="#">Forgot Password?</a>
+        </div>
+        <button type="submit">Login</button>
+      </form>
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <ul>
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
+    </div>
+    {#
+    <script src="login.js"></script>
+    #}
+
+    <div class="login-container">
+      <h1>STUDENT</h1>
+      <form action="{{ url_for('student_login') }}" method="post">
+          <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  placeholder="Enter student username"
+                  required
+              />
+          </div>
+          <div class="form-group">
+              <label for="password">Password</label>
+              <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  placeholder="Enter student password"
+                  required
+              />
+          </div>
+          <button type="submit">Login</button>
+      </form>
+  </div>
+  </body>
+</html>

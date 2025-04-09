@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feedback - Dorm Dash</title>
+    <style>
+        body {
+            font-family: "Palatino Linotype", serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f3;
+            color: #2b3a42;
+        }
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2e4756, #3b5d6b);
+            padding: 20px;
+            position: fixed;
+            color: #f0f7fa;
+        }
+        .sidebar h1 {
+            font-size: 2rem;
+            text-align: center;
+            color: #dfe7ea;
+            font-family: "Georgia", serif;
+        }
+        .sidebar a {
+            display: block;
+            color: #f0f7fa;
+            text-decoration: none;
+            padding: 12px 0;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+            transition: background 0.3s, padding-left 0.3s;
+        }
+        .sidebar a:hover {
+            background-color: #3b5d6b;
+            padding-left: 10px;
+        }
+        .content {
+            margin-left: 300px;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(90deg, #2e4756, #486a7c);
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .header h2 {
+            color: #f0f7fa;
+            margin: 0;
+            font-family: "Georgia", serif;
+        }
+        .feedback-section {
+            margin-top: 20px;
+            background: linear-gradient(120deg, #f7fafc, #e6eff2);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .feedback-section h3 {
+            color: #2e4756;
+            font-family: "Georgia", serif;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #a5b9c0;
+        }
+        .btn {
+            margin-top: 15px;
+            padding: 10px 15px;
+            background-color: #2e4756;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: #3b5d6b;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="sidebar">
+        <h1>DORM DASH</h1>
+        <a href="{{ url_for('student_dashboard', student_name=student_name) }}">Dashboard</a>
+        <a href="{{ url_for('sattendance') }}">Attendance</a>
+        <a href="{{ url_for('change_password') }}">Change Password</a>
+        <a href="{{ url_for('student_fee_details') }}">Fee Details</a>
+        <a href="{{ url_for('feedback') }}">Feedback</a>
+        <a href="{{ url_for('stuleaveform') }}">Leave Form</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    <div class="content">
+        <div class="header">
+            <h2>STUDENT FEEDBACK</h2>
+        </div>
+        <div class="feedback-section">
+            <h3>Submit Your Feedback</h3>
+            <form id="feedback-form" method="POST">
+                 
+                <label for="room-no">Room No:</label>
+                <input type="text" id="room-no" name="room-no" required>
+            
+                <label for="feedback">Feedback:</label>
+                <textarea id="feedback" name="feedback" rows="4" required></textarea>
+            
+                <button type="submit" class="btn">Submit Feedback</button>
+            </form>
+            
+            
+        </div>
+    </div>
+    
+    </div>
+    <script src="sfeedback.js"></script>
+</body>
+</html>

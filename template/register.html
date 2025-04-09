@@ -1,0 +1,322 @@
+<!-- filepath: /c:/Users/lincy/Desktop/mp/templates/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      .sidebar {
+        width: 260px;
+        height: 100vh; /* Full height */
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed; /* Keeps it fixed on the screen */
+        color: #f0f7fa;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        margin-right: 10px;
+        margin-bottom: 2rem;
+        color: #dfe7ea;
+        font-family: "Georgia", serif;
+        text-align: center;
+      }
+
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: background 0.3s, padding-left 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+
+      .content {
+        margin-left: 280px;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-left: 20px;
+      }
+
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #dfe7ea;
+      }
+
+      .profile span {
+        color: #f0f7fa;
+      }
+
+      .form-section {
+        margin-top: 10px;
+        background: linear-gradient(120deg, #f7fafc, #e6eff2);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        margin-left: 20px;
+        padding-top: 3px;
+      }
+
+      .form-section h3 {
+        color: #2e4756;
+        font-family: "Georgia", serif;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #486a7c;
+        font-family: "Georgia", serif;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #a5b9c0;
+        border-radius: 5px;
+        background-color: #ffffff;
+        font-family: "Palatino Linotype", serif;
+      }
+
+      .btn {
+        background: linear-gradient(90deg, #2e4756, #3b5d6b);
+        color: #f0f7fa;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: "Georgia", serif;
+        transition: background 0.3s;
+      }
+
+      .btn:hover {
+        background: #3b5d6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}"
+        >Dashboard</a
+      >
+      <a href="{{ url_for('register', admin_username=admin_username) }}"
+        >Registration</a
+      >
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}"
+        >Attendance</a
+      >
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}"
+        >Room Details</a
+      >
+      <a href="{{ url_for('student_details', admin_username=admin_username) }}"
+        >Student Details</a
+      >
+      <a href="{{ url_for('adfee', admin_username=admin_username) }}"
+        >View Fees</a
+      >
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}"
+        >Meal Plan</a
+      >
+      <a href="{{ url_for('adfeedback', admin_username=admin_username) }}"
+        >Feedback</a
+      >
+      <a href="{{ url_for('notice', admin_username=admin_username) }}"
+        >Notice</a
+      >
+      <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}"
+        >Leave Form</a
+      >
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <div class="content">
+      <div class="header">
+        <h2>REGISTRATION</h2>
+        <div class="profile">
+          <img src="https://via.placeholder.com/40" alt="Admin" />
+          <span>Admin Name</span>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <h3>Student Registration</h3>
+        <form action="/register" method="POST">
+          <!-- Student Information -->
+          <div class="form-group">
+            <label for="student-name">Full Name</label>
+            <input
+              type="text"
+              id="student-name"
+              name="full_name"
+              placeholder="Enter full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="student-id">Registration Number</label>
+            <input
+              type="text"
+              id="student-id"
+              name="registration_number"
+              placeholder="Enter student registration number"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="address">Address</label>
+            <textarea
+              id="address"
+              name="address"
+              placeholder="Enter address"
+              rows="3"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter email"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="Enter phone number"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="course">Course Name</label>
+            <select id="course" name="course" required>
+              <option value="">Select Course</option>
+              <option value="computer-science">Computer Science</option>
+              <option value="electrical-electronics">
+                Electrical and Electronics
+              </option>
+              <option value="electrical">Electrical</option>
+              <option value="ai-ml">AI/ML</option>
+              <option value="mca">MCA</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Academic Year</label>
+            <div style="display: flex; gap: 10px">
+              <input
+                type="number"
+                id="from-year"
+                name="academic_year_start"
+                placeholder="From Year (e.g., 2023)"
+                required
+              />
+              <span style="align-self: center">to</span>
+              <input
+                type="number"
+                id="to-year"
+                name="academic_year_end"
+                placeholder="To Year (e.g., 2027)"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="room">Room Allocation</label>
+            <input
+              type="text"
+              id="room"
+              name="room_number"
+              placeholder="Enter room number"
+              required
+            />
+          </div>
+
+          <!-- Guardian Information -->
+          <h3>Guardian Details</h3>
+
+          <div class="form-group">
+            <label for="guardian-name">Name</label>
+            <input
+              type="text"
+              id="guardian-name"
+              name="guardian_name"
+              placeholder="Enter guardian name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="guardian-phone">Phone Number</label>
+            <input
+              type="tel"
+              id="guardian-phone"
+              name="guardian_phone"
+              placeholder="Enter guardian phone number"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn">Register</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

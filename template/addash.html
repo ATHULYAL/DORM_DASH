@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <style>
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+      }
+
+      .sidebar h1 {
+        font-size: 2rem;
+        margin-right: 10px;
+        margin-bottom: 2rem;
+        color: #dfe7ea;
+        font-family: "Georgia", serif;
+        text-align: center;
+      }
+
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: background 0.3s, padding-left 0.3s;
+      }
+
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+
+      .content {
+        margin-left: 280px;
+        padding: 20px;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 15px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-left: 20px;
+      }
+
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid #dfe7ea;
+      }
+
+      .profile span {
+        color: #f0f7fa;
+      }
+
+      .notice-board {
+        margin-top: 20px;
+        background: linear-gradient(120deg, #f7fafc, #dfe7ea);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        margin-left: 20px;
+      }
+
+      .notice-board h3 {
+        margin: 0 0 20px 0;
+        color: #2e4756;
+        font-family: "Georgia", serif;
+      }
+
+      .notice {
+        background: #f0f7fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .notice p {
+        margin: 0;
+        color: #2b3a42;
+      }
+
+      .form-section {
+        margin-top: 30px;
+        background: linear-gradient(120deg, #f7fafc, #e6eff2);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .form-section h3 {
+        color: #2e4756;
+        font-family: "Georgia", serif;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #486a7c;
+        font-family: "Georgia", serif;
+      }
+
+      .form-group input,
+      .form-group textarea {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #a5b9c0;
+        border-radius: 5px;
+        background-color: #ffffff;
+        font-family: "Palatino Linotype", serif;
+      }
+
+      .btn {
+        background: linear-gradient(90deg, #2e4756, #3b5d6b);
+        color: #f0f7fa;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-family: "Georgia", serif;
+        transition: background 0.3s;
+      }
+
+      .btn:hover {
+        background: #3b5d6b;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
+      <a href="{{ url_for('student_details', admin_username=admin_username) }}">Student Details</a>
+      <a href="{{ url_for('adfee', admin_username=admin_username) }}">View Fees</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
+      <a href="{{ url_for('adfeedback', admin_username=admin_username) }}">Feedback</a>
+
+      <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+      <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}">Leave Form</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+</div>
+
+    <div class="content">
+      <div class="header">
+        <h2>DASHBOARD</h2>
+        <div class="profile">
+          <span>{{ admin_username }}</span>
+          <img src="https://via.placeholder.com/40" alt="Admin" />
+        </div>
+      </div>
+
+      <div class="notice-board">
+        <h3>Notice Board</h3>
+        {% if notices %}
+            {% for notice in notices %}
+            <div class="notice">
+                <p><strong>{{ notice.title }}</strong></p>
+                <p>{{ notice.description }}</p>
+                <small class="notice-date">Posted on: {{ notice.date.strftime('%Y-%m-%d') }}</small>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="notice">
+                <p>No notices available.</p>
+            </div>
+        {% endif %}
+    </div>
+  </body>
+</html>

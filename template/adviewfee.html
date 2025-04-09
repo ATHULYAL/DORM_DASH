@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>View Student Fee Details</title>
+    <style>
+      body {
+        font-family: "Palatino Linotype", serif;
+        margin: 0;
+        padding: 0;
+        background-color: #eef2f3;
+        color: #2b3a42;
+      }
+      .sidebar {
+        width: 260px;
+        height: 100vh;
+        background: linear-gradient(180deg, #2e4756, #3b5d6b);
+        padding: 20px;
+        position: fixed;
+        color: #f0f7fa;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #a5b9c0 #2e4756;
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 8px;
+      }
+      .sidebar::-webkit-scrollbar-track {
+        background: #2e4756;
+      }
+      .sidebar::-webkit-scrollbar-thumb {
+        background: #a5b9c0;
+        border-radius: 4px;
+      }
+      .sidebar h1 {
+        font-size: 2rem;
+        text-align: center;
+        color: #dfe7ea;
+        margin-right: 10px;
+        margin-bottom: 2rem;
+        font-family: "Georgia", serif;
+      }
+      .sidebar a {
+        display: block;
+        color: #f0f7fa;
+        text-decoration: none;
+        padding: 12px 0;
+        font-size: 1rem;
+        border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+        transition: background 0.3s, padding-left 0.3s;
+      }
+      .sidebar a:hover {
+        background-color: #3b5d6b;
+        padding-left: 10px;
+      }
+      .content {
+        margin-left: 300px;
+        padding: 20px;
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(90deg, #2e4756, #486a7c);
+        padding: 22px 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      .header h2 {
+        color: #f0f7fa;
+        margin: 0;
+        font-family: "Georgia", serif;
+      }
+      .detail {
+        margin-top: 25px;
+      }
+      .detail label {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .detail select,
+      .detail input,
+      .detail button {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        margin-top: 20px;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background: #3b5d6b;
+        color: white;
+      }
+      .action-buttons button {
+        padding: 5px 10px;
+        margin-right: 5px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .approve-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+      .reject-btn {
+        background-color: #f44336;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <h1>DORM DASH</h1>
+      <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+      <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+      <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+      <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
+      <a href="{{ url_for('student_details', admin_username=admin_username) }}">Student Details</a>
+      <a href="{{ url_for('adfee', admin_username=admin_username) }}">View Fees</a>
+      <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
+      <a href="{{ url_for('adfeedback', admin_username=admin_username) }}">Feedback</a>
+      <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+      <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}">Leave Form</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+</div>
+    <div class="content">
+      <div class="header">
+        <h2>View Student Fee Details</h2>
+      </div>
+      <div class="detail">
+        <label for="studentYear">Select Student Year:</label>
+        <select id="studentYear">
+          <option value="1st Year">1st Year</option>
+          <option value="2nd Year">2nd Year</option>
+          <option value="3rd Year">3rd Year</option>
+          <option value="4th Year">4th Year</option>
+          <option value="MCA 1st Year">MCA 1st Year</option>
+          <option value="MCA 2nd Year">MCA 2nd Year</option>
+        </select>
+        <label for="month">Select Month:</label>
+        <select id="month">
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+        </select>
+        <label for="year">Enter Year:</label>
+        <input type="text" id="year" placeholder="Enter Year (e.g., 2025)" />
+        <button onclick="fetchFees()">View Fees</button>
+      </div>
+      <table id="feesTable">
+        <thead>
+          <tr>
+            <th>Reg No.</th>
+            <th>Student Name</th>
+            <th>Transaction ID</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>12345</td>
+            <td>John Doe</td>
+            <td>TXN123456</td>
+            <td>$500</td>
+            <td>Waiting</td>
+            <td class="action-buttons">
+              <button class="approve-btn" onclick="approvePayment(12345)">
+                Approve
+              </button>
+              <button class="reject-btn" onclick="rejectPayment(12345)">
+                Reject
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <script>
+      function fetchFees() {
+        const studentYear = document.getElementById("studentYear").value;
+        const year = document.getElementById("year").value;
+        const month = document.getElementById("month").value;
+
+        // Make API call to fetch fee details
+        fetch(
+          `/get_fee_details?studentYear=${encodeURIComponent(
+            studentYear
+          )}&month=${encodeURIComponent(month)}&year=${encodeURIComponent(
+            year
+          )}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              updateTable(data.fees);
+            } else {
+              alert("Error fetching fee details: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error fetching fee details");
+          });
+      }
+
+      function updateTable(fees) {
+        const tbody = document.querySelector("#feesTable tbody");
+        tbody.innerHTML = ""; // Clear existing rows
+
+        fees.forEach((fee) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                  <td>${fee.reg_no}</td>
+                  <td>${fee.student_name}</td>
+                  <td>${fee.transaction_id}</td>
+                  <td>${fee.amount}</td>
+                  <td>${fee.status}</td>
+                  <td class="action-buttons">
+                      ${
+                        fee.status === "Waiting"
+                          ? `
+                          <button class="approve-btn" onclick="approvePayment(${fee.fee_id})">
+                              Approve
+                          </button>
+                          <button class="reject-btn" onclick="rejectPayment(${fee.fee_id})">
+                              Reject
+                          </button>
+                      `
+                          : fee.status
+                      }
+                  </td>
+              `;
+          tbody.appendChild(row);
+        });
+      }
+
+      function approvePayment(feeId) {
+        updatePaymentStatus(feeId, "approve");
+      }
+
+      function rejectPayment(feeId) {
+        updatePaymentStatus(feeId, "reject");
+      }
+
+      function updatePaymentStatus(feeId, action) {
+        fetch("/update_fee_status", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fee_id: feeId,
+            action: action,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert(`Payment ${action}d successfully`);
+              fetchFees(); // Refresh the table
+            } else {
+              alert("Error updating payment status: " + data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error updating payment status");
+          });
+      }
+    </script>
+  </body>
+</html>
