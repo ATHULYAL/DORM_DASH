@@ -4,7 +4,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 
 from flask import Flask, render_template, request, redirect, url_for, flash,jsonify, send_from_directory,session
-from sqlalchemy import text
+from sqlalchemy import text,desc
 from db import db
 
 # Add MealPlan to the imports from model
@@ -30,7 +30,7 @@ def serve_upload(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 # Import models after db initialization
 with app.app_context():
-    from model import Student, Admin, MealPlan, Notice, Room, Attendance,Stu,FeeDetails,Leave
+    from model import Student, Admin, MealPlan, Notice, Room, Attendance,Stu,FeeDetails,Leave,Feedback
 
 @app.route('/')
 def home():
@@ -496,6 +496,18 @@ def attendance():
     except Exception as e:
         flash(f'Error loading attendance page: {str(e)}', 'danger')
         return redirect(url_for('dashboard', admin_username=admin_username))
+@app.route('/mark_attendance', methods=['POST'])
+def mark_attendance():
+    try:
+        student_id = request.form['student_id']
+        date = request.form['date']
+        status = request.form['status']
+
+        # Add code to save the attendance data to the database
+
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 @app.route('/add_fees', methods=['GET', 'POST'])
 def add_fees():
     try:
@@ -814,6 +826,116 @@ def admin_leave_form():
         print(f"Error loading leave form: {str(e)}")
         flash('Error loading leave form', 'error')
         return redirect(url_for('dashboard', admin_username=admin_username))
-    
+ 
+@app.route("/guidelines")
+def guidelines():
+    return render_template("guidelines.html")
+
+
+@app.route("/sattendance", methods=["GET", "POST"])
+def sattendance():
+    absent_dates = []
+    student_name = None
+
+    if request.method == "POST":
+        email = request.form.get("email")
+
+        # Verify if the student exists
+        student = Student.query.filter_by(email=email).first()
+
+        if student:
+            student_name = student.name
+
+            # Fetch the 5 latest absent dates
+            absent_records = (
+                Attendance.query.filter_by(student_id=student.id, status="Absent")
+                .order_by(desc(Attendance.attendance_date))  # ✅ Using desc correctly
+                .limit(5)
+                .all()
+            )
+
+            # Extract only dates
+            absent_dates = [record.attendance_date.strftime("%Y-%m-%d") for record in absent_records]
+        else:
+            flash("Email not found. Please enter a valid student email.", "error")
+
+    return render_template("sattendance.html", absent_dates=absent_dates, student_name=student_name)
+
+@app.route("/feedback", methods=["GET", "POST"])
+def feedback():
+    if request.method == "POST":
+        feedback_text = request.form.get("feedback")
+        room_no = request.form.get("room-no", type=int)  # Ensure integer type or None
+
+        if not feedback_text:
+            flash("Feedback cannot be empty!", "danger")
+            return redirect(url_for("feedback"))
+
+        try:
+            new_feedback = Feedback(feedback=feedback_text, room_no=room_no)
+            db.session.add(new_feedback)
+            db.session.commit()
+            flash("Feedback submitted successfully!", "success")
+            return redirect(url_for("feedback"))  # Prevents resubmission on refresh
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error submitting feedback: {str(e)}", "danger")
+
+    return render_template("sfeedback.html")
+
+
+
+@app.route("/adfeedback")
+def adfeedback():
+    try:
+        feedback_entries = Feedback.query.all()  # Fetch all feedback entries from the database
+        return render_template("adfeedback.html", feedback_entries=feedback_entries)
+    except Exception as e:
+        print(f"Error fetching feedback: {e}")
+        return render_template("adfeedback.html", feedback_entries=[])
+
+
+@app.route("/change_password", methods=["GET", "POST"])
+def change_password():
+    if request.method == "POST":
+        email = request.form["email"]
+        old_password = request.form["old-password"]
+        new_password = request.form["new-password"]
+        confirm_password = request.form["confirm-password"]
+
+        print(f"Received: email={email}, old_password={old_password}, new_password={new_password}")
+
+        # Fetch the user
+        user = Stu.query.filter_by(username=email).first()
+        if user:
+            print(f"User found: {user.username}, stored password={user.password}")
+        else:
+            print("User not found in DB.")
+            flash("User not found!", "danger")
+            return redirect(url_for("change_password"))
+
+        # Check if old password matches
+        if user.password == old_password:
+            if new_password == confirm_password:
+                try:
+                    user.password = new_password  # Update password
+                    db.session.commit()  # Commit changes
+                    print("Password updated successfully!")
+                    flash("Password updated successfully!", "success")
+                    return redirect(url_for("change_password"))
+                except Exception as e:
+                    db.session.rollback()  # Rollback in case of error
+                    print("Error updating password:", e)
+                    flash("An error occurred while updating password.", "danger")
+            else:
+                print("New passwords do not match.")
+                flash("New password and confirmation do not match.", "danger")
+        else:
+            print("Old password is incorrect.")
+            flash("Old password is incorrect.", "danger")
+
+    return render_template("stuchangepass.html")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

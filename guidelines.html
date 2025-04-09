@@ -152,20 +152,19 @@
 <body>
     <div class="sidebar">
         <h1>DORM DASH</h1>
-        <a href="addash.html">Dashboard</a>
-        <a href="registration.html">Registration</a>
-        <a href="sdetails.html">Student Details</a>
-        <a href="#">Attendance</a>
-        <a href="adroom.html">Room Details</a>
-        <a href="#">Fee Details</a>
-        <a href="mealplan.html">Meal Plan</a>
-        <a href="#">Feedback</a>
-        <a href="notice.html">Notice</a>
-        <a href="guidelines.html">Guidelines</a> <!-- Active page -->
-        <a href="#">Leave Form</a>
-        <a href="login.html">Logout</a>
-    </div>
-
+        <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+        <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
+        <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
+        <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
+        <a href="{{ url_for('student_details', admin_username=admin_username) }}">Student Details</a>
+        <a href="{{ url_for('adfee', admin_username=admin_username) }}">View Fees</a>
+        <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
+        <a href="{{ url_for('adfeedback', admin_username=admin_username) }}">Feedback</a>
+        <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+        <a href="{{ url_for('guidelines') }}">Guidelines</a>
+        <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}">Leave Form</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+  </div>
     <div class="content">
         <div class="header">
             <h2>HOSTEL GUIDELINES</h2>

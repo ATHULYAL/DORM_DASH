@@ -3,11 +3,11 @@ from db import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)  # ✅ This is the correct primary key
     name = db.Column(db.String(100), nullable=False)
     registration_number = db.Column(db.String(100), nullable=False)
     address = db.Column(db.String(255), nullable=False)
-    email = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
     phone = db.Column(db.String(20), nullable=False)
     course = db.Column(db.String(100), nullable=False)
     academic_year_start = db.Column(db.Integer, nullable=False)
@@ -15,6 +15,7 @@ class Student(db.Model):
     room_number = db.Column(db.String(10), nullable=False)
     guardian_name = db.Column(db.String(100), nullable=False)
     guardian_phone = db.Column(db.String(20), nullable=False)
+
 
 class Admin(db.Model):
     username = db.Column(db.String(20), primary_key=True, nullable=False)
@@ -81,3 +82,16 @@ class FeeDetails(db.Model):
     transaction_id = db.Column(db.String(100), nullable=True) 
     
     student = db.relationship('Student', backref='fee_details')
+
+class Feedback(db.Model):
+    __tablename__ = 'feedback'
+    
+    feedback_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    feedback = db.Column(db.Text, nullable=False)
+    room_no = db.Column(db.Integer, nullable=True)
+    status = db.Column(db.String(20), default="pending", nullable=False)# Removed ForeignKey constraint
+
+
+
+
+    

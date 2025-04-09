@@ -146,10 +146,10 @@
     <div class="sidebar">
       <h1>DORM DASH</h1>
       <a href="{{ url_for('student_dashboard', student_name=student_name) }}">Dashboard</a>
-      <a href="#">Attendance</a>
-      <a href="#">Change Password</a>
+      <a href="{{ url_for('sattendance') }}">Attendance</a>
+      <a href="{{ url_for('change_password') }}">Change Password</a>
       <a href="{{ url_for('student_fee_details') }}">Fee Details</a>
-      <a href="#">Feedback</a>
+      <a href="{{ url_for('feedback') }}">Feedback</a>
       <a href="{{ url_for('stuleaveform') }}">Leave Form</a>
       <a href="{{ url_for('logout') }}">Logout</a>
   </div>

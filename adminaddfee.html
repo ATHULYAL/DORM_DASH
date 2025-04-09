@@ -20,6 +20,37 @@
             position: fixed;
             color: #f0f7fa;
         }
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+          }
+          .sidebar::-webkit-scrollbar-track {
+            background: #2e4756;
+          }
+          .sidebar::-webkit-scrollbar-thumb {
+            background: #a5b9c0;
+            border-radius: 4px;
+          }
+          .sidebar h1 {
+            font-size: 2rem;
+            text-align: center;
+            color: #dfe7ea;
+            margin-right: 10px;
+            margin-bottom: 2rem;
+            font-family: "Georgia", serif;
+          }
+          .sidebar a {
+            display: block;
+            color: #f0f7fa;
+            text-decoration: none;
+            padding: 12px 0;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(240, 247, 250, 0.3);
+            transition: background 0.3s, padding-left 0.3s;
+          }
+          .sidebar a:hover {
+            background-color: #3b5d6b;
+            padding-left: 10px;
+          }
         .content {
             margin-left: 280px;
             padding: 20px;
@@ -44,10 +75,17 @@
     <div class="sidebar">
         <h1>DORM DASH</h1>
         <a href="{{ url_for('dashboard', admin_username=admin_username) }}">Dashboard</a>
+        <a href="{{ url_for('register', admin_username=admin_username) }}">Registration</a>
         <a href="{{ url_for('attendance', admin_username=admin_username) }}">Attendance</a>
-        <a href="{{ url_for('add_fees', admin_username=admin_username) }}">Add Fees</a>
+        <a href="{{ url_for('rooms', admin_username=admin_username) }}">Room Details</a>
+        <a href="{{ url_for('student_details', admin_username=admin_username) }}">Student Details</a>
+        <a href="{{ url_for('adfee', admin_username=admin_username) }}">View Fees</a>
+        <a href="{{ url_for('mealplan', admin_username=admin_username) }}">Meal Plan</a>
+        <a href="{{ url_for('adfeedback', admin_username=admin_username) }}">Feedback</a>
+        <a href="{{ url_for('notice', admin_username=admin_username) }}">Notice</a>
+        <a href="{{ url_for('admin_leave_form', admin_username=admin_username) }}">Leave Form</a>
         <a href="{{ url_for('logout') }}">Logout</a>
-    </div>
+  </div>
 
     <div class="content">
       <h2>Add Student Fees</h2>

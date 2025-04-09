@@ -125,14 +125,15 @@
   <body>
     <div class="sidebar">
       <h1>DORM DASH</h1>
-      <a href="sdash.html">Dashboard</a>
-      <a href="sguidelines.html" class="active">Guidelines</a>
-      <a href="sattendance.html">Attendance</a>
-      <a href="stuchangepass.html">Change Password</a>
-      <a href="sfee.html">Fee Details</a>
-      <a href="sfeedback.html">Feedback</a>
-      <a href="stuleaveform.html">Leave Form</a>
-      <a href="login.html">Logout</a>
+      <a href="{{ url_for('student_dashboard', student_name=student_name) }}"
+        >Dashboard</a
+      >
+      <a href="{{ url_for('sattendance') }}">Attendance</a>
+      <a href="{{ url_for('change_password') }}">Change Password</a>
+      <a href="{{ url_for('student_fee_details') }}">Fee Details</a>
+      <a href="{{ url_for('feedback') }}">Feedback</a>
+      <a href="{{ url_for('stuleaveform') }}">Leave Form</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
     </div>
     <div class="content">
       <div class="header">
